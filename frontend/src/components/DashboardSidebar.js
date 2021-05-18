@@ -27,7 +27,7 @@ const items = [
     title: 'Mahasiswa'
   },
   {
-    href: '/app/products',
+    href: '/app/absensi',
     icon: ShoppingBagIcon,
     title: 'Absensi'
   }
