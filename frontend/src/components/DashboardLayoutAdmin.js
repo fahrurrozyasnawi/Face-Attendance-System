@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { experimentalStyled } from '@material-ui/core'
+import DashboardNavbarAdmin from './DashboardNavbarAdmin'
+import DashboardSidebarAdmin from './DashboardSidebarAdmin'
 
 const DashboardLayoutRoot = experimentalStyled('div')(
   ({ theme }) => ({
@@ -45,6 +47,13 @@ const DashboardLayoutAdmin = () => {
 
   return (
     <DashboardLayoutRoot>
+      <DashboardNavbarAdmin
+        onMobileNavOpen={() => setMobileNavOpen(true)}
+      />
+      <DashboardSidebarAdmin 
+        onMobileClose={() => setMobileNavOpen(false)}
+        openMobile={isMobileNavOpen}
+      />
       <DashboardLayoutWrapper>
         <DashboardLayoutContainer>
           <DashboardLayoutContent>

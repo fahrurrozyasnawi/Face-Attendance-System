@@ -83,7 +83,7 @@ const DashboardSidebarAdmin = ({ onMobileClose, openMobile }) => {
           anchor='left'
           onClose={onMobileClose}
           open={openMobile}
-          variant='temporary'
+          variant="temporary"
           PaperProps={{
             sx:{
               width: 256

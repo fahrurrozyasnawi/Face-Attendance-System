@@ -18,29 +18,32 @@ const DashboardNavbarAdmin = ({ onMobileNavOpen, ...rest }) => {
   const [notification] = useState([])
 
   return (
-    <AppBar>
+    <AppBar
+      elevation={0}
+      {...rest}
+    >
       <Toolbar>
         <RouterLink to="/admin">
-            <Logo />
+          <Logo />
         </RouterLink>
-        <Box sx={{ flewGrow : 1 }} />
+        <Box sx={{ flexGrow : 1 }} />
         <Hidden lgDown>
-          <IconButton color='inherit' >
+          <IconButton color="inherit" >
             <Badge
               badgeContent={notification.length}
-              color='primary'
-              variant='dot'
+              color="primary"
+              variant="dot"
             >
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <IconButton color='inherit'>
+          <IconButton color="inherit">
             <InputIcon />
           </IconButton>
         </Hidden>
         <Hidden lgUp>
           <IconButton
-            color='inherit'
+            color="inherit"
             onClick={onMobileNavOpen}
           >
             <MenuIcon />
