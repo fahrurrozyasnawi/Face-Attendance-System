@@ -16,3 +16,5 @@ const angkatan = [
     label: '2020'
   }
 ]
+
+export default angkatan
