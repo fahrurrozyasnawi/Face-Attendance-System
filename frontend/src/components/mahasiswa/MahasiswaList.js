@@ -69,13 +69,13 @@ const MahasiswaList = ({ mahasiswas, ...rest}) => {
               <TableRow>
                 <TableCell padding='checkbox' >
                   <Checkbox 
-                    checked={selectedMahasiswaIds.length === mahasiswas.length}
-                    color='primary'
-                    indeterminate={
-                      selectedMahasiswaIds.length > 0
-                      && selectedMahasiswaIds.length < mahasiswas.length
-                    }
-                    onChange={handleSelectAll}
+                    // checked={selectedMahasiswaIds.length === mahasiswas.length}
+                    // color='primary'
+                    // indeterminate={
+                    //   selectedMahasiswaIds.length > 0
+                    //   && selectedMahasiswaIds.length < mahasiswas.length
+                    // }
+                    // onChange={handleSelectAll}
                   />
                 </TableCell>
                 <TableCell>

@@ -1,37 +1,38 @@
 import React from 'react'
+import {useForm} from 'react-hook-form'
 import {
   Box,
   Button,
   Card,
   CardContent,
   CardHeader,
+  InputLabel,
   Divider,
   Grid,
   MenuItem,
-  TextField
+  TextField,
+  FormControl
 } from '@material-ui/core'
-import angkatan from './List/angkatan'
+import angkatan from './List/Angkatan'
+import { Select } from '@material-ui/core'
 
 const AddMahasiswa = (props) => {
-  const [dataMahasiswa, setDataMahasiswa] = useState([])
-
-  const handleChange = (event) => {
-    setDataMahasiswa({
-      ...dataMahasiswa,
-      [event.target.name]: event.target.value
-    })
+  const { register, handleSubmit } = useForm()
+  const onSubmit = (data, e) => {
+    e.preventDefault()
+    // fetch()
   }
-  
   return (
     <form
       autoComplete='off'
-      noValidate
+      onSubmit={handleSubmit(onSubmit)}
+      // noValidate
       {...props}
     >
       <Card>
-        <CardHeader
+        {/* <CardHeader
           title='Tambah Mahasiswa'
-        />
+        /> */}
         <Divider />
         <CardContent>
           <Grid
@@ -43,14 +44,12 @@ const AddMahasiswa = (props) => {
               md={12}
               xs={12}
             >
-              <TextField 
+              <TextField
+                {...register("namaLengkap")} 
                 fullWidth
                 helperText="Isi nama lengkap mahasiswa"
                 label='Nama Lengkap'
-                name='namaLengkap'
-                onChange={handleChange}
                 required
-                value={dataMahasiswa.namaLengkap}
                 variant='outlined'
               />
             </Grid>
@@ -59,14 +58,11 @@ const AddMahasiswa = (props) => {
               md={4}
               xs={12}
             >
-              <TextField 
+              <TextField
+                {...register("nim")} 
                 fullWidth
-                helperText="Isi NIM mahasiswa"
                 label='NIM'
-                name='nim'
-                onChange={handleChange}
                 required
-                value={dataMahasiswa.nim}
                 variant='outlined'
               />
             </Grid>
@@ -76,12 +72,10 @@ const AddMahasiswa = (props) => {
               xs={12}
             >
               <TextField 
+                {...register("kelas")}
                 fullWidth
                 label='Kelas'
-                name='kelas'
-                onChange={handleChange}
                 required
-                value={dataMahasiswa.kelas}
                 variant='outlined'
               />
             </Grid>
@@ -90,34 +84,32 @@ const AddMahasiswa = (props) => {
               md={4}
               xs={12}
             >
-              <TextField 
-                fullWidth
-                label='Angkatan'
-                name='angkatan'
-                onChange={handleChange}
-                required
-                value={dataMahasiswa.angkatan}
-                variant='outlined'
-              >
-                {angkatan.map((option) => (
-                  <MenuItem key={option.value} value={option.value} >
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <FormControl variant="outlined" fullWidth >
+                <InputLabel id="label-angkatan">Angkatan</InputLabel>
+                <Select
+                  {...register("angkatan")}
+                  labelId="label-angkatan"
+                  label="Angkatan"
+                >
+                  {angkatan.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              
             </Grid>
             <Grid
               item
               md={12}
               xs={12}
             >
-              <TextField 
+              <TextField
+                {...register("programStudi")} 
                 fullWidth
                 label='Program Studi'
-                name='programStudi'
-                onChange={handleChange}
                 required
-                value={dataMahasiswa.programStudi}
                 variant='outlined'
               />
             </Grid>
@@ -132,6 +124,7 @@ const AddMahasiswa = (props) => {
           }}
         >
           <Button
+            type="submit"
             color='primary'
             variant='contained'
           >

@@ -1,4 +1,5 @@
-import React from 'react'
+import React, {useState} from 'react'
+import {useForm} from 'react-hook-form'
 import {
   Box,
   Button,
@@ -11,26 +12,20 @@ import {
 } from '@material-ui/core'
 
 const AddDosen = (props) => {
-  const [dataDosen, setDataDosen] = useState([])
+  const { register, handleSubmit } = useForm()
+  const onSubmit = data => console.log(data)
 
-  const handleChange = (event) => {
-    setDataDosen({
-      ...dataDosen,
-      [event.target.name] : event.target.value
-    })
-  }
-  
   return (
     <form
       autoComplete='off'
-      noValidate
+      onSubmit={handleSubmit(onSubmit)}
       {...props}
     >
       <Card>
-        <CardHeader
+        {/* <CardHeader
           title='Tambah Dosen'
         />
-        <Divider />
+        <Divider /> */}
         <CardContent>
           <Grid
             container
@@ -42,12 +37,11 @@ const AddDosen = (props) => {
               xs={12}
             >
               <TextField
+                {...register("namaDosen")}
                 fullWidth
+                size="small"
                 label='Nama Dosen'
-                name='namaDosen'
-                onChange={handleChange} 
                 required
-                value={dataDosen.namaDosen}
                 variant='outlined'
               />
             </Grid>
@@ -57,14 +51,38 @@ const AddDosen = (props) => {
               xs={12}
             >
               <TextField 
+                {...register("nip")}
                 fullWidth
+                size="small"
                 label='NIP'
-                name='nip'
-                onChange={handleChange}
+                type="number"
                 required
-                value={dataDosen.nip}
-                variant='outlined'
+                variant='outlined'  
               />
+            </Grid>
+            <Grid
+              item
+              md={12}
+              xs={12}
+            >
+              <TextField 
+                {...register("prodi")}
+                fullWidth
+                size="small"
+                label='Program Studi'
+                required
+                variant='outlined'  
+              />
+            </Grid>
+            <Grid
+              item
+            >
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+              >Submit
+              </Button>
             </Grid>
           </Grid>
         </CardContent>

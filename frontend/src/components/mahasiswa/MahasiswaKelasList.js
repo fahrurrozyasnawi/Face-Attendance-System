@@ -1,5 +1,6 @@
-import React from 'react'
-import PropTypes from 'proptypes'
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
+import moment from 'moment'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {
   Avatar,
@@ -88,5 +89,10 @@ const MahasiswaKelasList = ({ kelass, ...rest }) => {
     </Card>
   )
 }
+
+MahasiswaKelasList.propTypes = {
+  kelass: PropTypes.array.isRequired
+};
+
 
 export default MahasiswaKelasList

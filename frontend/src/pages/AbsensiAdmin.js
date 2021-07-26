@@ -1,10 +1,19 @@
 import React from 'react'
+import {
+  Box,
+  Typography
+} from '@material-ui/core'
 
 const AbsensiAdmin = () => {
   return (
-    <div>
-      Absensi Admin
-    </div>
+    <Box sx={{
+      py : 2,
+      px : 2
+    }}>
+      <Typography variant="h3" >
+        Absensi
+      </Typography>
+    </Box>
   )
 }
 
