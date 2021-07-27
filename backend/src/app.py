@@ -18,13 +18,14 @@ def allDataMahasiswa():
   if request.method == 'POST':
     data = mahasiswaCol.insert({
     # '_id': request.json['nim'],
+    '_id' : ObjectId(),
     'namaLengkap': request.json['namaLengkap'],
     'nim': request.json['nim'],
     'kelas': request.json['kelas'],
     'angkatan': request.json['angkatan'],
     'programStudi': request.json['programStudi']
     })
-    return jsonify({'status': "Data telah disimpan"}, data)
+    return jsonify({'status': "Data telah disimpan"}, str(ObjectId(data)))
   
   if request.method == 'GET':
     dataMahasiswa = []

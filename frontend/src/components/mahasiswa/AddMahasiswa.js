@@ -20,7 +20,12 @@ const AddMahasiswa = (props) => {
   const { register, handleSubmit } = useForm()
   const onSubmit = (data, e) => {
     e.preventDefault()
-    // fetch()
+    fetch('/data-mahasiswa', {
+      method: 'POST',
+      body: data
+    })
+      .then(res => res.json())
+      .then(json => handleSubmit())
   }
   return (
     <form
