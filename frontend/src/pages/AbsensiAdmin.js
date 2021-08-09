@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 import {
   Box,
   Typography
-} from '@material-ui/core'
+} from '@material-ui/core';
 
 const AbsensiAdmin = () => {
   return (
@@ -14,7 +14,7 @@ const AbsensiAdmin = () => {
         Absensi
       </Typography>
     </Box>
-  )
-}
+  );
+};
 
-export default AbsensiAdmin
+export default AbsensiAdmin;

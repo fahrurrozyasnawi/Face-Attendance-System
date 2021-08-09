@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState} from 'react';
 import { 
   Box,
   Button,
@@ -10,20 +10,20 @@ import {
   DialogTitle,
   Typography,
   Divider
- } from '@material-ui/core'
-import AddDosen from 'src/components/dosen/AddDosen'
-import { Search as SearchIcon } from 'react-feather'
-import { Dialog } from '@material-ui/core'
-import { DialogContent } from '@material-ui/core'
+ } from '@material-ui/core';
+import AddDosen from 'src/components/dosen/AddDosen';
+import { Search as SearchIcon } from 'react-feather';
+import { Dialog } from '@material-ui/core';
+import { DialogContent } from '@material-ui/core';
  
  const DosenToolbar = (props) => {
-   const [open, setOpen] = useState(false)
+   const [open, setOpen] = useState(false);
 
    const handleClickOpen = () => {
-     setOpen(true)
+     setOpen(true);
    }
    const handleClose = () => {
-     setOpen(false)
+     setOpen(false);
    }
    
    return (
@@ -90,8 +90,7 @@ import { DialogContent } from '@material-ui/core'
         </Card>
       </Box>
     </Box>
-   )
- }
+   );
+ };
  
- export default DosenToolbar
- 
+ export default DosenToolbar;

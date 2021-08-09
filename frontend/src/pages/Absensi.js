@@ -1,6 +1,6 @@
-import { Box, Container, Grid } from '@material-ui/core'
-import React from 'react'
-import { Helmet } from 'react-helmet'
+import { Box, Container, Grid } from '@material-ui/core';
+import React from 'react';
+import { Helmet } from 'react-helmet';
 
 const Absensi = () => {
   return (
@@ -22,7 +22,7 @@ const Absensi = () => {
         </Container>
       </Box>
     </>
-  )
-}
+  );
+};
 
-export default Absensi
+export default Absensi;

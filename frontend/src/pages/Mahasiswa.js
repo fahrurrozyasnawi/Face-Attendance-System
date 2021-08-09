@@ -1,12 +1,12 @@
 import { 
   Box, 
   Container 
-} from '@material-ui/core'
-import React from 'react'
-import { Helmet } from 'react-helmet'
-import CustomerListResults from 'src/components/customer/CustomerListResults'
-import CustomerListToolbar from 'src/components/customer/CustomerListToolbar'
-import customers from 'src/__mocks__/customers'
+} from '@material-ui/core';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import CustomerListResults from 'src/components/customer/CustomerListResults';
+import CustomerListToolbar from 'src/components/customer/CustomerListToolbar';
+import customers from 'src/__mocks__/customers';
 
 const Mahasiswa = () => (
   <>
@@ -29,6 +29,6 @@ const Mahasiswa = () => (
     </Box>
 
   </>
-)
+);
 
-export default Mahasiswa
+export default Mahasiswa;

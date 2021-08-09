@@ -15,6 +15,6 @@ const angkatan = [
     value: 2020,
     label: '2020'
   }
-]
+];
 
-export default angkatan
+export default angkatan;

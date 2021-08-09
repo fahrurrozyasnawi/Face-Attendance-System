@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-import {useForm} from 'react-hook-form'
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
 import {
   Box,
   Button,
@@ -9,11 +9,11 @@ import {
   Divider,
   Grid,
   TextField
-} from '@material-ui/core'
+} from '@material-ui/core';
 
 const AddDosen = (props) => {
-  const { register, handleSubmit } = useForm()
-  const onSubmit = data => console.log(data)
+  const { register, handleSubmit } = useForm();
+  const onSubmit = data => console.log(data);
 
   return (
     <form
@@ -88,7 +88,7 @@ const AddDosen = (props) => {
         </CardContent>
       </Card>
     </form>
-  )
-}
+  );
+};
 
-export default AddDosen
+export default AddDosen;

@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
-import PropTypes from 'prop-types'
+import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import {
     AppBar,
     Badge,
@@ -8,14 +8,14 @@ import {
     Hidden,
     IconButton,
     Toolbar
-} from '@material-ui/core'
-import MenuIcon from '@material-ui/icons/Menu'
-import NotificationsIcon from '@material-ui/icons/NotificationsOutlined'
-import InputIcon from '@material-ui/icons/Input'
-import Logo from './Logo'
+} from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
+import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
+import InputIcon from '@material-ui/icons/Input';
+import Logo from './Logo';
 
 const DashboardNavbarAdmin = ({ onMobileNavOpen, ...rest }) => {
-  const [notification] = useState([])
+  const [notification] = useState([]);
 
   return (
     <AppBar
@@ -51,11 +51,11 @@ const DashboardNavbarAdmin = ({ onMobileNavOpen, ...rest }) => {
         </Hidden>
       </Toolbar>
     </AppBar>
-  )
-}
+  );
+};
 
 DashboardNavbarAdmin.propTypes = {
   onMobileNavOpen: PropTypes.func
-}
+};
 
-export default DashboardNavbarAdmin
+export default DashboardNavbarAdmin;

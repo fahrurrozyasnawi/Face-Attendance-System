@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
-import { experimentalStyled } from '@material-ui/core'
-import DashboardNavbarAdmin from './DashboardNavbarAdmin'
-import DashboardSidebarAdmin from './DashboardSidebarAdmin'
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import { experimentalStyled } from '@material-ui/core';
+import DashboardNavbarAdmin from './DashboardNavbarAdmin';
+import DashboardSidebarAdmin from './DashboardSidebarAdmin';
 
 const DashboardLayoutRoot = experimentalStyled('div')(
   ({ theme }) => ({
@@ -12,7 +12,7 @@ const DashboardLayoutRoot = experimentalStyled('div')(
     overflow: 'hidden',
     width: '100%'
   })
-)
+);
 
 const DashboardLayoutWrapper = experimentalStyled('div')(
   ({ theme }) => ({
@@ -24,7 +24,7 @@ const DashboardLayoutWrapper = experimentalStyled('div')(
       paddingLeft: 256
     }
   })
-)
+);
 
 const DashboardLayoutContainer = experimentalStyled('div')(
   {
@@ -32,7 +32,7 @@ const DashboardLayoutContainer = experimentalStyled('div')(
     flex: '1 1 auto',
     overflow: 'hidden'
   }
-)
+);
 
 const DashboardLayoutContent = experimentalStyled('div')(
   {
@@ -40,10 +40,10 @@ const DashboardLayoutContent = experimentalStyled('div')(
     height: '100%',
     overflow: 'auto'
   }
-)
+);
 
 const DashboardLayoutAdmin = () => {
-  const [ isMobileNavOpen, setMobileNavOpen ] = useState(false)
+  const [ isMobileNavOpen, setMobileNavOpen ] = useState(false);
 
   return (
     <DashboardLayoutRoot>
@@ -62,7 +62,7 @@ const DashboardLayoutAdmin = () => {
         </DashboardLayoutContainer>
       </DashboardLayoutWrapper>
     </DashboardLayoutRoot>
-  )
-}
+  );
+};
 
-export default DashboardLayoutAdmin
+export default DashboardLayoutAdmin;

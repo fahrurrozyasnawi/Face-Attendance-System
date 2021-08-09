@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 import {
   Box,
   Typography
-} from '@material-ui/core'
+} from '@material-ui/core';
 
 const DashboardAdmin = () => {
   return (
@@ -16,7 +16,7 @@ const DashboardAdmin = () => {
         Dashboard Admin
       </Typography>
     </Box>
-  )
-}
+  );
+};
 
-export default DashboardAdmin
+export default DashboardAdmin;

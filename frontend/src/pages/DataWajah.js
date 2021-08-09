@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 import {
   Box,
   Typography
-} from '@material-ui/core'
+} from '@material-ui/core';
 
 const DataWajah = () => {
   return (
@@ -14,7 +14,7 @@ const DataWajah = () => {
         Data Wajah
       </Typography>
     </Box>
-  )
-}
+  );
+};
 
-export default DataWajah
+export default DataWajah;

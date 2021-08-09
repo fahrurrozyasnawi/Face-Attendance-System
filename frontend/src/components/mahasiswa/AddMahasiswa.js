@@ -1,5 +1,5 @@
-import React from 'react'
-import {useForm} from 'react-hook-form'
+import React from 'react';
+import {useForm} from 'react-hook-form';
 import {
   Box,
   Button,
@@ -12,12 +12,12 @@ import {
   MenuItem,
   TextField,
   FormControl
-} from '@material-ui/core'
-import angkatan from './List/Angkatan'
-import { Select } from '@material-ui/core'
+} from '@material-ui/core';
+import angkatan from './List/Angkatan';
+import { Select } from '@material-ui/core';
 
 const AddMahasiswa = (props) => {
-  const { register, handleSubmit } = useForm()
+  const { register, handleSubmit } = useForm();
   const onSubmit = (data, e) => {
     e.preventDefault()
     fetch('/data-mahasiswa', {
@@ -25,7 +25,7 @@ const AddMahasiswa = (props) => {
       body: data
     })
       .then(res => res.json())
-      .then(json => handleSubmit())
+      .then(json => handleSubmit());
   }
   return (
     <form
@@ -138,7 +138,7 @@ const AddMahasiswa = (props) => {
         </Box>
       </Card>
     </form>
-  )
-}
+  );
+};
 
-export default AddMahasiswa
+export default AddMahasiswa;

@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
-import moment from 'moment'
-import PerfectScrollbar from 'react-perfect-scrollbar'
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
   Avatar,
   Box,
@@ -11,52 +11,52 @@ import {
   TableCell,
   TableHead,
   TableRow
-} from '@material-ui/core'
+} from '@material-ui/core';
 
 const MahasiswaKelasList = ({ kelass, ...rest }) => {
-  const [selectedKelasIds, setSelectedKelasIds] = useState([])
-  const [limit, setLimit] = useState(10)
-  const [page, setPage] = useState(0)
+  const [selectedKelasIds, setSelectedKelasIds] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(0);
 
 
   const handleSelectAll = (event) => {
-    let newSelectedKelasIds
+    let newSelectedKelasIds;
     
     if (event.target.checked) {
-      newSelectedKelasIds = kelass.map((kelas) => kelas.id)
+      newSelectedKelasIds = kelass.map((kelas) => kelas.id);
     } else {
-      newSelectedKelasIds = []
+      newSelectedKelasIds = [];
     }
 
-    setSelectedKelasIds(newSelectedKelasIds)
+    setSelectedKelasIds(newSelectedKelasIds);
   }
 
   const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedKelasIds.indexOf(id)
-    let newSelectedKelasIds = []
+    const selectedIndex = selectedKelasIds.indexOf(id);
+    let newSelectedKelasIds = [];
 
     if (selectedIndex === -1) {
-      newSelectedKelasIds = newSelectedKelasIds.concat(selectedKelasIds, id)
+      newSelectedKelasIds = newSelectedKelasIds.concat(selectedKelasIds, id);
     } else if (selectedIndex === 0) {
-      newSelectedKelasIds = newSelectedKelasIds.concat(selectedKelasIds.slice(1))
+      newSelectedKelasIds = newSelectedKelasIds.concat(selectedKelasIds.slice(1));
     } else if (selectedIndex === selectedKelasIds.lenght - 1) {
-      newSelectedKelasIds = newSelectedKelasIds.concat(selectedKelasIds.slice(0, -1))
+      newSelectedKelasIds = newSelectedKelasIds.concat(selectedKelasIds.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelectedKelasIds = newSelectedKelasIds.concat(
         selectedKelasIds.slice(0, selectedIndex),
         selectedKelasIds.slice(selectedIndex + 1)
-      )
+      );
     }
 
-    setSelectedKelasIds(newSelectedKelasIds)
+    setSelectedKelasIds(newSelectedKelasIds);
   }
   
   const handleLimitChange = (event) => {
-    setLimit(event.target.value)
+    setLimit(event.target.value);
   }
 
   const handlePageChange = (event, newPage) => {
-    setPage(newPage)
+    setPage(newPage);
   }
   
   return (
@@ -87,12 +87,12 @@ const MahasiswaKelasList = ({ kelass, ...rest }) => {
         </Box>
       </PerfectScrollbar>
     </Card>
-  )
-}
+  );
+};
 
 MahasiswaKelasList.propTypes = {
   kelass: PropTypes.array.isRequired
 };
 
 
-export default MahasiswaKelasList
+export default MahasiswaKelasList;

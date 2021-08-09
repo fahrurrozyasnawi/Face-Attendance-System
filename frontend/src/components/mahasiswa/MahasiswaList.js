@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
-import moment from 'moment'
-import PerfectScrollbar from 'react-perfect-scrollbar'
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
   Avatar,
   Box,
@@ -12,52 +12,52 @@ import {
   TableCell,
   TableHead,
   TableRow
-} from '@material-ui/core'
+} from '@material-ui/core';
 
 
 const MahasiswaList = ({ mahasiswas, ...rest}) => {
-  const [selectedMahasiswaIds, setSelectedMahasiswaIds] = useState([])
-  const [limit, setLimit] = useState(10)
-  const [page, setPage] = useState(0)
+  const [selectedMahasiswaIds, setSelectedMahasiswaIds] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(0);
   
   const handleSelectAll = (e) => {
-    let newSelectedMahasiswaIds
+    let newSelectedMahasiswaIds;
 
     if (e.target.checked) {
-      newSelectedMahasiswaIds = mahasiswas.map((mahasiswa) => mahasiswa.id)
+      newSelectedMahasiswaIds = mahasiswas.map((mahasiswa) => mahasiswa.id);
     } else {
-      newSelectedMahasiswaIds = []
+      newSelectedMahasiswaIds = [];
     }
     
-    setSelectedMahasiswaIds(newSelectedMahasiswaIds)
+    setSelectedMahasiswaIds(newSelectedMahasiswaIds);
   }
   
   const handleSelectOne = (e, id) => {
-    const selectedIndex = selectedMahasiswaIds.indexOf(id)
-    let newSelectedMahasiswaIds = []
+    const selectedIndex = selectedMahasiswaIds.indexOf(id);
+    let newSelectedMahasiswaIds = [];
 
     if (selectedIndex === -1) {
-      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds, id)
+      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds, id);
     } else if (selectedIndex === 0) {
-      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds.slice(1))
+      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds.slice(1));
     } else if (selectedIndex === selectedMahasiswaIds.length - 1) {
-      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds.slice(0, -1))
+      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(
         selectedMahasiswaIds.slice(0, selectedIndex),
         selectedMahasiswaIds.slice(selectedIndex + 1)
-      )
+      );
     }
 
-    setSelectedMahasiswaIds(newSelectedMahasiswaIds)
+    setSelectedMahasiswaIds(newSelectedMahasiswaIds);
   }
   
   const handleLimitChange = (event) => {
-    setLimit(event.target.value)  
+    setLimit(event.target.value);
   }
 
   const hanldePageChange = (event, newPage) => {
-    setPage(newPage)
+    setPage(newPage);
   }
   
   return (
@@ -105,11 +105,11 @@ const MahasiswaList = ({ mahasiswas, ...rest}) => {
         </Box>
       </PerfectScrollbar>
     </Card>
-  )
-}
+  );
+};
 
 MahasiswaList.propTypes = {
   mahasiswas: PropTypes.array.isRequired
-}
+};
 
-export default MahasiswaList
+export default MahasiswaList;

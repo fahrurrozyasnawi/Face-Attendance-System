@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
-import PropTypes from 'prop-types'
+import React, { useEffect } from 'react';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import {
   Box,
   Divider,
   Drawer,
   Hidden,
   List
-} from '@material-ui/core'
-import NavItem from './NavItem'
+} from '@material-ui/core';
+import NavItem from './NavItem';
 import {
   Grid as DashboardIcon,
   Users as DataIcon,
   FileText as DataAbsensiIcon,
   Image as DataWajahIcon
-} from 'react-feather'
+} from 'react-feather';
 
 const items = [
   {
@@ -42,16 +42,16 @@ const items = [
     icon: DataWajahIcon,
     title: 'Data Wajah'
   }
-]
+];
 
 const DashboardSidebarAdmin = ({ onMobileClose, openMobile }) => {
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
     if(openMobile && onMobileClose){
       onMobileClose()
     }
-  }, [location.pathname])
+  }, [location.pathname]);
 
   const content = (
     <Box
@@ -75,7 +75,7 @@ const DashboardSidebarAdmin = ({ onMobileClose, openMobile }) => {
         </List>
       </Box>
     </Box>
-  )
+  );
   return (
     <>
       <Hidden lgUp>
@@ -110,17 +110,17 @@ const DashboardSidebarAdmin = ({ onMobileClose, openMobile }) => {
         </Drawer>
       </Hidden>
     </>
-  )
-}
+  );
+};
 
 DashboardSidebarAdmin.propTypes = {
   onMobileClose: PropTypes.func,
   openMobile: PropTypes.bool
-}
+};
 
 DashboardSidebarAdmin.defaultProps = {
   onMobileClose: () => { },
   openMobile: false
-}
+};
 
-export default DashboardSidebarAdmin
+export default DashboardSidebarAdmin;

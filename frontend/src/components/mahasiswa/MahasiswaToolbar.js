@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -12,16 +12,16 @@ import {
 } from '@material-ui/core';
 import { Search as SearchIcon } from 'react-feather';
 import { DialogContent } from '@material-ui/core';
-import AddMahasiswa from 'src/components/mahasiswa/AddMahasiswa'
+import AddMahasiswa from 'src/components/mahasiswa/AddMahasiswa';
 
 const MahasiswaToolbar = (props) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true)
+    setOpen(true);
   }
   const handleClose = () => {
-    setOpen(false)
+    setOpen(false);
   }
   
   return (
@@ -75,7 +75,7 @@ const MahasiswaToolbar = (props) => {
       </Card>
     </Box>
   </Box>
-  )
-}
+  );
+};
 
-export default MahasiswaToolbar
+export default MahasiswaToolbar;

@@ -1,11 +1,11 @@
-import React from 'react'
-import { Helmet } from 'react-helmet'
+import React from 'react';
+import { Helmet } from 'react-helmet';
 import {
   Container,
   Box
-} from '@material-ui/core'
-import DosenList from 'src/components/dosen/DosenList'
-import DosenToolbar from 'src/components/dosen/DosenToolbar'
+} from '@material-ui/core';
+import DosenList from 'src/components/dosen/DosenList';
+import DosenToolbar from 'src/components/dosen/DosenToolbar';
 
 const DosenAdmin = () => {
   return (
@@ -28,7 +28,7 @@ const DosenAdmin = () => {
         </Container>
       </Box>
     </>
-  )
-}
+  );
+};
 
-export default DosenAdmin
+export default DosenAdmin;

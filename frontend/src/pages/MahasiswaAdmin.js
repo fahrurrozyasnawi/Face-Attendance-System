@@ -1,11 +1,11 @@
-import React from 'react'
-import { Helmet } from 'react-helmet'
+import React from 'react';
+import { Helmet } from 'react-helmet';
 import {
   Container,
   Box
-} from '@material-ui/core'
-import MahasiswaKelasList from 'src/components/mahasiswa/MahasiswaKelasList'
-import MahasiswaToolbar from 'src/components/mahasiswa/MahasiswaToolbar'
+} from '@material-ui/core';
+import MahasiswaKelasList from 'src/components/mahasiswa/MahasiswaKelasList';
+import MahasiswaToolbar from 'src/components/mahasiswa/MahasiswaToolbar';
 
 
 const MahasiswaAdmin = () => {
@@ -29,7 +29,7 @@ const MahasiswaAdmin = () => {
         </Container>
       </Box>
     </>
-  )
-}
+  );
+};
 
-export default MahasiswaAdmin
+export default MahasiswaAdmin;
