@@ -11,11 +11,13 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableRow
+  TablePagination,
+  TableRow,
+  Typography
 } from '@material-ui/core';
 
 
-const MahasiswaList = ({ mahasiswas, ...rest}) => {
+const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
   const [selectedMahasiswaIds, setSelectedMahasiswaIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -24,7 +26,7 @@ const MahasiswaList = ({ mahasiswas, ...rest}) => {
     let newSelectedMahasiswaIds;
 
     if (e.target.checked) {
-      newSelectedMahasiswaIds = mahasiswas.map((mahasiswa) => mahasiswa.id);
+      newSelectedMahasiswaIds = dataMahasiswa.map((mahasiswa) => mahasiswa.id);
     } else {
       newSelectedMahasiswaIds = [];
     }
@@ -69,13 +71,13 @@ const MahasiswaList = ({ mahasiswas, ...rest}) => {
               <TableRow>
                 <TableCell padding='checkbox' >
                   <Checkbox 
-                    // checked={selectedMahasiswaIds.length === mahasiswas.length}
-                    // color='primary'
-                    // indeterminate={
-                    //   selectedMahasiswaIds.length > 0
-                    //   && selectedMahasiswaIds.length < mahasiswas.length
-                    // }
-                    // onChange={handleSelectAll}
+                    checked={selectedMahasiswaIds.length === dataMahasiswa.length}
+                    color='primary'
+                    indeterminate={
+                      selectedMahasiswaIds.length > 0
+                      && selectedMahasiswaIds.length < dataMahasiswa.length
+                    }
+                    onChange={handleSelectAll}
                   />
                 </TableCell>
                 <TableCell>
@@ -99,17 +101,57 @@ const MahasiswaList = ({ mahasiswas, ...rest}) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* Use API python */}
+              {dataMahasiswa.map((mahasiswa) => (
+                <TableRow
+                  hover
+                  key={mahasiswa._id}
+                  selected={selectedMahasiswaIds.indexOf(mahasiswa._id) !== -1}
+                >
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedMahasiswaIds.indexOf(mahasiswa._id) !== -1}
+                      onChange={(event) => handleSelectOne(event, mahasiswa._id)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    {mahasiswa.nim}
+                  </TableCell>
+                  <TableCell>
+                    {mahasiswa.namaLengkap}
+                  </TableCell>
+                  <TableCell>
+                    {mahasiswa.kelas}
+                  </TableCell>
+                  <TableCell>
+                    {mahasiswa.angkatan}
+                  </TableCell>
+                  <TableCell>
+                    {mahasiswa.programStudi}
+                  </TableCell>
+                  <TableCell>
+                    Tes
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </Box>
       </PerfectScrollbar>
+      <TablePagination 
+        component="div"
+        count={dataMahasiswa.length}
+        onPageChange={hanldePageChange}
+        onRowsPerPageChange={handleLimitChange}
+        page={page}
+        rowsPerPage={limit}
+        rowsPerPageOptions={[5, 10, 20]}
+      />
     </Card>
   );
 };
 
 MahasiswaList.propTypes = {
-  mahasiswas: PropTypes.array.isRequired
+  dataMahasiswa: PropTypes.array.isRequired
 };
 
 export default MahasiswaList;

@@ -1,0 +1,9 @@
+# install package files for backend python
+Flask=PyMongo
+numpy
+flask-cors
+matplotlib
+pandas
+tensorflow
+opencv-python
+mxnet

@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {useForm} from 'react-hook-form';
 import {
   Box,
   Button,
   Card,
+  Alert,
   CardContent,
-  CardHeader,
+  Snackbar,
   InputLabel,
   Divider,
   Grid,
@@ -14,19 +15,61 @@ import {
   FormControl
 } from '@material-ui/core';
 import angkatan from './List/Angkatan';
+import prodi from './List/Prodi'
 import { Select } from '@material-ui/core';
 
 const AddMahasiswa = (props) => {
   const { register, handleSubmit } = useForm();
-  const onSubmit = (data, e) => {
+  const [open, setOpen] = useState(false)
+  const [message, setMessage] = useState("")
+  const [type, setType] = useState()
+
+  const msgSuccess = (msg = "Data berhasil diinput!", severity='success') => {
+    setMessage(msg)
+    setType(severity)
+  }
+  const msgError = (msg="Data sudah ada! Harap input data yang baru.", severity='error') => {
+    setMessage(msg)
+    setType(severity)
+  }
+
+  const handleClick = () => {
+    setOpen(true)
+  }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway'){
+      return
+    }
+    setOpen(false)
+  }
+  
+  // useEffect(() => {
+    
+  // })
+  const onSubmit = async (data, e) => {
     e.preventDefault()
-    fetch('/data-mahasiswa', {
+    const response = await fetch('/data-mahasiswa', {
       method: 'POST',
-      body: data
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify(data)
     })
       .then(res => res.json())
-      .then(json => handleSubmit());
+      .then(json => {
+        handleSubmit()
+        handleClick()
+        msgSuccess()
+        console.log(message)
+      })
+      .catch( err => {
+        console.log(message)
+        handleClick()
+        msgError()
+      })
+      console.log(data)
   }
+
   return (
     <form
       autoComplete='off'
@@ -35,9 +78,6 @@ const AddMahasiswa = (props) => {
       {...props}
     >
       <Card>
-        {/* <CardHeader
-          title='Tambah Mahasiswa'
-        /> */}
         <Divider />
         <CardContent>
           <Grid
@@ -110,13 +150,20 @@ const AddMahasiswa = (props) => {
               md={12}
               xs={12}
             >
-              <TextField
-                {...register("programStudi")} 
-                fullWidth
-                label='Program Studi'
-                required
-                variant='outlined'
-              />
+              <FormControl variant="outlined" fullWidth >
+                <InputLabel id="label-prodi">Program Studi</InputLabel>
+                <Select
+                  {...register("programStudi")}
+                  labelId="label-prodi"
+                  label="Program Studi"
+                >
+                  {prodi.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
         </CardContent>
@@ -136,6 +183,23 @@ const AddMahasiswa = (props) => {
             Simpan
           </Button>
         </Box>
+        <Snackbar
+          sx={{
+            justifyContent: 'center'
+          }}
+          open={open} 
+          autoHideDuration={6000} 
+          onClose={handleClose}
+          // message="I love snacks"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center'
+          }}
+        >
+          <Alert onClose={handleClose} severity={type} >
+            {message}
+          </Alert>
+        </Snackbar>
       </Card>
     </form>
   );

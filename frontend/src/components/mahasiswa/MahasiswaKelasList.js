@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -10,20 +10,22 @@ import {
   TableBody,
   TableCell,
   TableHead,
+  TablePagination,
   TableRow
 } from '@material-ui/core';
-
-const MahasiswaKelasList = ({ kelass, ...rest }) => {
+import groupBy from 'src/utils/groupBy'
+// kelass, ...rest 
+const MahasiswaKelasList = ({ dataKelas, ...rest}) => {
   const [selectedKelasIds, setSelectedKelasIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
-
+  const [mahasiswa, setMahasiswa] = useState([])
 
   const handleSelectAll = (event) => {
     let newSelectedKelasIds;
     
     if (event.target.checked) {
-      newSelectedKelasIds = kelass.map((kelas) => kelas.id);
+      newSelectedKelasIds = dataKelas.map((kelas) => kelas.id);
     } else {
       newSelectedKelasIds = [];
     }
@@ -60,9 +62,13 @@ const MahasiswaKelasList = ({ kelass, ...rest }) => {
   }
   
   return (
-    <Card {...rest}>
+    <Card 
+    {...rest}
+    >
       <PerfectScrollbar>
-        <Box>
+        <Box
+          sx={{ minWidth: 1050 }}
+        >
           <Table>
             <TableHead>
               <TableRow>
@@ -82,16 +88,34 @@ const MahasiswaKelasList = ({ kelass, ...rest }) => {
             </TableHead>
             <TableBody>
               {/* API Data Kelas */}
+              {dataKelas.slice(0, limit).map(kelas =>(
+                <TableRow>
+                  <TableCell>
+                    <Box>
+                      {kelas}
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </Box>
       </PerfectScrollbar>
+      {/* <TablePagination 
+        component="div"
+        count={dataKelas.lenght}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleLimitChange}
+        page={page}
+        rowsPerPage={limit}
+        rowsPerPageOptions={[5, 10, 15]}
+      /> */}
     </Card>
   );
 };
 
 MahasiswaKelasList.propTypes = {
-  kelass: PropTypes.array.isRequired
+  dataKelas: PropTypes.array.isRequired
 };
 
 

@@ -13,7 +13,19 @@ import {
 
 const AddDosen = (props) => {
   const { register, handleSubmit } = useForm();
-  const onSubmit = data => console.log(data);
+  const onSubmit = (data, e) => {
+    e.preventDefault()
+    fetch('/data-dosen', {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(res => res.json())
+      .then(json => handleSubmit())
+      console.log(data)
+  }
 
   return (
     <form
@@ -66,7 +78,7 @@ const AddDosen = (props) => {
               xs={12}
             >
               <TextField 
-                {...register("prodi")}
+                {...register("programStudi")}
                 fullWidth
                 size="small"
                 label='Program Studi'
