@@ -15,6 +15,7 @@ import {
   TableRow,
   Typography
 } from '@material-ui/core';
+import groupBy from 'src/utils/groupBy'
 
 
 const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
@@ -22,11 +23,11 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   
-  const handleSelectAll = (e) => {
+  const handleSelectAll = (event) => {
     let newSelectedMahasiswaIds;
 
-    if (e.target.checked) {
-      newSelectedMahasiswaIds = dataMahasiswa.map((mahasiswa) => mahasiswa.id);
+    if (event.target.checked) {
+      newSelectedMahasiswaIds = dataMahasiswa.map((mahasiswa) => mahasiswa._id);
     } else {
       newSelectedMahasiswaIds = [];
     }
@@ -34,12 +35,12 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
     setSelectedMahasiswaIds(newSelectedMahasiswaIds);
   }
   
-  const handleSelectOne = (e, id) => {
-    const selectedIndex = selectedMahasiswaIds.indexOf(id);
+  const handleSelectOne = (event, _id) => {
+    const selectedIndex = selectedMahasiswaIds.indexOf(_id);
     let newSelectedMahasiswaIds = [];
 
     if (selectedIndex === -1) {
-      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds, id);
+      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds, _id);
     } else if (selectedIndex === 0) {
       newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds.slice(1));
     } else if (selectedIndex === selectedMahasiswaIds.length - 1) {
@@ -55,12 +56,18 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
   }
   
   const handleLimitChange = (event) => {
-    setLimit(event.target.value);
+    setLimit(+event.target.value)
+    setPage(0)
   }
 
   const hanldePageChange = (event, newPage) => {
     setPage(newPage);
   }
+
+  const dataPerKelas = groupBy(dataMahasiswa, 'kelas')
+  console.log(dataPerKelas)
+  // const dataPerProdi = groupBy(dataPerKelas, 'programStudi')
+  // console.log(dataPerProdi)
   
   return (
     <Card {...rest}>
@@ -101,7 +108,7 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {dataMahasiswa.map((mahasiswa) => (
+              {dataMahasiswa.slice(page * limit, page * limit + limit).map((mahasiswa) => (
                 <TableRow
                   hover
                   key={mahasiswa._id}

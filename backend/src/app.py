@@ -24,10 +24,15 @@ def allDataMahasiswa():
     return jsonify(dataMahasiswa)
 
   if request.method == 'POST':
+    
     data = mahasiswaCol.insert({
     '_id' : request.json['nim'],
     'namaLengkap': request.json['namaLengkap'],
     'nim': request.json['nim'],
+    # 'data' : [{
+    #   'nim' : request.json['nim'],
+    #   'namaLengkap' : request.json['namaLengkap']
+    # }],
     'kelas': request.json['kelas'],
     'angkatan': str(request.json['angkatan']),
     'programStudi': request.json['programStudi']

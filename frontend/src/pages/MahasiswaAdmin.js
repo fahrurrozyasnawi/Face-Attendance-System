@@ -54,8 +54,8 @@ const MahasiswaAdmin = () => {
           <MahasiswaToolbar />
           <Box sx={{pt: 3 }} >
             {/* <MahasiswaKelasList /> */}
-            {/* <MahasiswaList dataMahasiswa={mahasiswa} /> */}
-            <CustomerListResults customers={customers} />
+            <MahasiswaList dataMahasiswa={mahasiswa} />
+            {/* <CustomerListResults customers={customers} /> */}
           </Box>
         </Container>
       </Box>

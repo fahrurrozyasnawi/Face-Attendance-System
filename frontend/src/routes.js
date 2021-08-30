@@ -32,6 +32,9 @@ const routes = [
     children: [
       { path: 'dashboard', element: <DashboardAdmin /> },
       { path: 'absensi', element: <AbsensiAdmin /> },
+      // { path: 'mahasiswa', element: <MahasiswaAdmin />, children : [
+      //   { path: 'kelas', element: <MahasiswaAdmin /> }
+      // ] },
       { path: 'mahasiswa', element: <MahasiswaAdmin /> },
       { path: 'face', element: <DataWajah /> },
       { path: 'dosen', element: <Dosen /> },
