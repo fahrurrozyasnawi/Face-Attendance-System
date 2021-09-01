@@ -16,12 +16,56 @@ import {
   Typography
 } from '@material-ui/core';
 import groupBy from 'src/utils/groupBy'
+import EnhancedTableHead from 'src/utils/EnhancedTableHead'
 
+const descendingComparator = (a, b, orderBy) => {
+  if (b[orderBy] < a[orderBy]){
+    return -1
+  }
+  if (b[orderBy] > a[orderBy]){
+    return 1
+  }
+  return 0
+}
+
+const getComparator = (order, orderBy) => {
+  return order === 'desc'
+    ? (a,b) => descendingComparator(a, b, orderBy)  
+    : (a,b) => -descendingComparator(a, b, orderBy)
+}
+
+const stableSort = (array, comparator) => {
+  const stabilizedThis = array.map((el, index) => [el, index])
+  stabilizedThis.sort((a,b) => {
+    const order = comparator(a[0], b[0])
+    if ( order !== 0) return order
+    return a[1] - b[1]
+  }) 
+  return stabilizedThis.map((el) => el[0])
+}
+
+const headCells = [
+  { id: 'nim', label: 'NIM' },
+  { id: 'namaLengkap', label: 'Nama Lengkap' },
+  { id: 'kelas', label: 'Kelas' },
+  { id: 'angkatan', label: 'Angkatan' },
+  { id: 'programStudi', label: 'Program Studi' }
+]
 
 const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
   const [selectedMahasiswaIds, setSelectedMahasiswaIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
+  const [order, setOrder] = useState('asc')
+  const [orderBy, setOrderBy] = useState('kelas')
+  const [searchTerm, setSearchTerm] = useState("")
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc'
+    setOrder(isAsc ? 'desc' : 'asc')
+    setOrderBy(property)
+  }
+  
   
   const handleSelectAll = (event) => {
     let newSelectedMahasiswaIds;
@@ -64,6 +108,9 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
     setPage(newPage);
   }
 
+  const isSelected = (_id) => selectedMahasiswaIds.indexOf(_id) !== -1
+  // const emptyRows = rowsPerPage - Math.min(limit, dataMahasiswa.length - page * limit)
+
   const dataPerKelas = groupBy(dataMahasiswa, 'kelas')
   console.log(dataPerKelas)
   // const dataPerProdi = groupBy(dataPerKelas, 'programStudi')
@@ -74,7 +121,7 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
       <PerfectScrollbar>
         <Box sx={{ minWidth: 1050 }} >
           <Table>
-            <TableHead>
+            {/* <TableHead>
               <TableRow>
                 <TableCell padding='checkbox' >
                   <Checkbox 
@@ -106,9 +153,24 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
                   Aksi
                 </TableCell>
               </TableRow>
-            </TableHead>
+            </TableHead> */}
+            <EnhancedTableHead 
+              numSelected={selectedMahasiswaIds.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAll}
+              onRequestSort={handleRequestSort}
+              rowCount={dataMahasiswa.length}
+              headCells={headCells}
+            />
             <TableBody>
-              {dataMahasiswa.slice(page * limit, page * limit + limit).map((mahasiswa) => (
+              {stableSort(dataMahasiswa, getComparator(order, orderBy))
+                .slice(page * limit, page * limit + limit)
+                .map((mahasiswa, index) => {
+                  const itemIsSelected = isSelected(mahasiswa._id)
+                  const labelId = 'enhanced-table-checkbox-${index}'
+
+                  return(
                 <TableRow
                   hover
                   key={mahasiswa._id}
@@ -139,7 +201,7 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
                     Tes
                   </TableCell>
                 </TableRow>
-              ))}
+              )})}
             </TableBody>
           </Table>
         </Box>

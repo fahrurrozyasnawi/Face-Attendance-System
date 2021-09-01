@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types'
 import {
   Box,
   Button,
@@ -16,6 +17,7 @@ import AddMahasiswa from 'src/components/mahasiswa/AddMahasiswa';
 
 const MahasiswaToolbar = (props) => {
   const [open, setOpen] = useState(false);
+  const { searchTerm, onSearchChange} = props
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -67,8 +69,10 @@ const MahasiswaToolbar = (props) => {
                   </InputAdornment>
                 )
               }}
-              placeholder="Search customer"
+              placeholder="Search Mahasiswa"
               variant="outlined"
+              value={searchTerm}
+              onChange={onSearchChange}
             />
           </Box>
         </CardContent>
@@ -77,5 +81,10 @@ const MahasiswaToolbar = (props) => {
   </Box>
   );
 };
+
+MahasiswaToolbar.propTypes = {
+  searchTerm: PropTypes.string.isRequired,
+  onSearchChange: PropTypes.func.isRequired
+}
 
 export default MahasiswaToolbar;

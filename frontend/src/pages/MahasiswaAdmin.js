@@ -14,11 +14,6 @@ import CustomerListResults from 'src/components/customer/CustomerListResults';
 const MahasiswaAdmin = () => {
   const [mahasiswa, setMahasiswa] = useState([])
 
-  // const getSortBy = (a,b) => {
-    
-  // }
-  
-
   const getDataMahasiswa = () => {
     fetch('/data-mahasiswa', {
       method: 'GET',
