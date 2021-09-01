@@ -13,7 +13,12 @@ import CustomerListResults from 'src/components/customer/CustomerListResults';
 
 const MahasiswaAdmin = () => {
   const [mahasiswa, setMahasiswa] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
 
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value)
+  }
+  
   const getDataMahasiswa = () => {
     fetch('/data-mahasiswa', {
       method: 'GET',
@@ -24,13 +29,17 @@ const MahasiswaAdmin = () => {
     })
       .then(res => res.json())
       .then(data => {
+        data = !searchTerm
+          ? data
+          : data.filter(person =>
+              person.namaLengkap.toLowerCase().includes(searchTerm.toLowerCase()))
         setMahasiswa(data)
       })
     }
 
   useEffect(() => {
     getDataMahasiswa()
-  },[mahasiswa])
+  },[mahasiswa,searchTerm])
   // console.log(mahasiswa)
 
   return (
@@ -46,7 +55,7 @@ const MahasiswaAdmin = () => {
         }}
       >
         <Container maxWidth={false} >
-          <MahasiswaToolbar />
+          <MahasiswaToolbar searchTerm={searchTerm} onSearchChange={handleSearch} />
           <Box sx={{pt: 3 }} >
             {/* <MahasiswaKelasList /> */}
             <MahasiswaList dataMahasiswa={mahasiswa} />

@@ -58,14 +58,12 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('kelas')
-  const [searchTerm, setSearchTerm] = useState("")
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
   }
-  
   
   const handleSelectAll = (event) => {
     let newSelectedMahasiswaIds;
@@ -155,33 +153,27 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
               </TableRow>
             </TableHead> */}
             <EnhancedTableHead 
-              numSelected={selectedMahasiswaIds.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAll}
               onRequestSort={handleRequestSort}
-              rowCount={dataMahasiswa.length}
               headCells={headCells}
             />
             <TableBody>
               {stableSort(dataMahasiswa, getComparator(order, orderBy))
                 .slice(page * limit, page * limit + limit)
                 .map((mahasiswa, index) => {
-                  const itemIsSelected = isSelected(mahasiswa._id)
-                  const labelId = 'enhanced-table-checkbox-${index}'
-
                   return(
                 <TableRow
                   hover
                   key={mahasiswa._id}
-                  selected={selectedMahasiswaIds.indexOf(mahasiswa._id) !== -1}
+                  // selected={selectedMahasiswaIds.indexOf(mahasiswa._id) !== -1}
                 >
-                  <TableCell padding="checkbox">
+                  {/* <TableCell padding="checkbox">
                     <Checkbox
                       checked={selectedMahasiswaIds.indexOf(mahasiswa._id) !== -1}
                       onChange={(event) => handleSelectOne(event, mahasiswa._id)}
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     {mahasiswa.nim}
                   </TableCell>
