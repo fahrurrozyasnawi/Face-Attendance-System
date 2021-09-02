@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { green, red } from '@material-ui/core/colors';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import {useForm} from 'react-hook-form';
 import {
-  Avatar,
+  Button,
   Box,
   Card,
-  Checkbox,
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TablePagination,
   TableRow,
-  Typography
+  DialogTitle,
+  Dialog,
+  DialogContent,
+  Hidden
 } from '@material-ui/core';
 import groupBy from 'src/utils/groupBy'
 import EnhancedTableHead from 'src/utils/EnhancedTableHead'
+import EditMahasiswa from 'src/components/mahasiswa/EditMahasiswa'
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]){
@@ -52,18 +56,29 @@ const headCells = [
   { id: 'programStudi', label: 'Program Studi' }
 ]
 
-const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
+const MahasiswaList = ({ dataMahasiswa, deleteMahasiswa, ...rest}) => {
   const [selectedMahasiswaIds, setSelectedMahasiswaIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc')
-  const [orderBy, setOrderBy] = useState('kelas')
+  const [orderBy, setOrderBy] = useState('nim')
+  const [open, setOpen] = useState(false)
+  const { getValues } = useForm()
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
   }
+
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+  
+  const handleClose = () => {
+    setOpen(false)
+  }
+  
   
   const handleSelectAll = (event) => {
     let newSelectedMahasiswaIds;
@@ -106,11 +121,8 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
     setPage(newPage);
   }
 
-  const isSelected = (_id) => selectedMahasiswaIds.indexOf(_id) !== -1
-  // const emptyRows = rowsPerPage - Math.min(limit, dataMahasiswa.length - page * limit)
-
   const dataPerKelas = groupBy(dataMahasiswa, 'kelas')
-  console.log(dataPerKelas)
+  // console.log(dataPerKelas)
   // const dataPerProdi = groupBy(dataPerKelas, 'programStudi')
   // console.log(dataPerProdi)
   
@@ -119,39 +131,6 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
       <PerfectScrollbar>
         <Box sx={{ minWidth: 1050 }} >
           <Table>
-            {/* <TableHead>
-              <TableRow>
-                <TableCell padding='checkbox' >
-                  <Checkbox 
-                    checked={selectedMahasiswaIds.length === dataMahasiswa.length}
-                    color='primary'
-                    indeterminate={
-                      selectedMahasiswaIds.length > 0
-                      && selectedMahasiswaIds.length < dataMahasiswa.length
-                    }
-                    onChange={handleSelectAll}
-                  />
-                </TableCell>
-                <TableCell>
-                  NIM
-                </TableCell>
-                <TableCell>
-                  Nama Lengkap
-                </TableCell>
-                <TableCell>
-                  Kelas
-                </TableCell>
-                <TableCell>
-                  Angkatan
-                </TableCell>
-                <TableCell>
-                  Program Studi
-                </TableCell>
-                <TableCell>
-                  Aksi
-                </TableCell>
-              </TableRow>
-            </TableHead> */}
             <EnhancedTableHead 
               order={order}
               orderBy={orderBy}
@@ -166,14 +145,7 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
                 <TableRow
                   hover
                   key={mahasiswa._id}
-                  // selected={selectedMahasiswaIds.indexOf(mahasiswa._id) !== -1}
                 >
-                  {/* <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectedMahasiswaIds.indexOf(mahasiswa._id) !== -1}
-                      onChange={(event) => handleSelectOne(event, mahasiswa._id)}
-                    />
-                  </TableCell> */}
                   <TableCell>
                     {mahasiswa.nim}
                   </TableCell>
@@ -190,7 +162,27 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
                     {mahasiswa.programStudi}
                   </TableCell>
                   <TableCell>
-                    Tes
+                    <Button
+                      variant="outlined"
+                      color="success"
+                      onClick={handleClickOpen}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      // sx={{
+                      //   // color: red[500],
+                      //   backgroundColor: red[400],
+                      //   '&:hover': {
+                      //     backgroundColor: red[700],
+                      //   },
+                      //   }}
+                      color="secondary"
+                      variant="outlined"
+                      onClick={(event) => deleteMahasiswa(mahasiswa._id)}
+                    >
+                      Delete
+                    </Button>
                   </TableCell>
                 </TableRow>
               )})}
@@ -207,8 +199,17 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
         rowsPerPage={limit}
         rowsPerPageOptions={[5, 10, 20]}
       />
+      <Dialog
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogTitle onClose={handleClose} >Edit Mahasiswa</DialogTitle>
+        <DialogContent>
+          <EditMahasiswa />
+        </DialogContent>
+      </Dialog>
     </Card>
-  );
+  )
 };
 
 MahasiswaList.propTypes = {

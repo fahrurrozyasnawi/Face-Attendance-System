@@ -18,11 +18,12 @@ import angkatan from './List/Angkatan';
 import prodi from './List/Prodi'
 import { Select } from '@material-ui/core';
 
-const EditMahasiswa = (props) => {
+const EditMahasiswa = ({...rest}) => {
   const { register, handleSubmit } = useForm();
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("")
   const [type, setType] = useState()
+  const [mahasiswaData, setMahasiswaData] = useState([])
 
   const msgSuccess = (msg = "Data berhasil diinput!", severity='success') => {
     setMessage(msg)
@@ -42,28 +43,40 @@ const EditMahasiswa = (props) => {
     }
     setOpen(false)
   }
-
-  const onUpdate = async (data,id) => {
+  
+  const onUpdate = async (data,id,e) => {
     e.preventDefault()
     const res = await fetch('/mahasiswa/${id}', {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(data)
     })
-      .then(res => await res.json())
+      .then(res => res.json())
+      .then(json => {
+        handleSubmit()
+        handleClick()
+        msgSuccess()
+        console.log(json)
+      })
+      .catch( err => {
+        handleClick()
+        msgError()
+      })
       // data = await res.json()
-
+      console.log("data form Edit = ",res)
   }
   
+  // console.log("Data getValues = ", getValues)
 
   return (
     <form
       autoComplete='off'
       onSubmit={handleSubmit(onUpdate)}
       // noValidate
-      {...props}
+      {...rest}
     >
       <Card>
         <Divider />
@@ -83,6 +96,7 @@ const EditMahasiswa = (props) => {
                 helperText="Isi nama lengkap mahasiswa"
                 label='Nama Lengkap'
                 required
+                // value={getValues["namaLengkap"]}
                 variant='outlined'
               />
             </Grid>
@@ -96,6 +110,7 @@ const EditMahasiswa = (props) => {
                 fullWidth
                 label='NIM'
                 required
+                // value={getValues.nim}
                 variant='outlined'
               />
             </Grid>
