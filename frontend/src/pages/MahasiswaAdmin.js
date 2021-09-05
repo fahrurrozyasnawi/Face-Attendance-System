@@ -18,19 +18,6 @@ const MahasiswaAdmin = () => {
   const handleSearch = (event) => {
     setSearchTerm(event.target.value)
   }
-
-  const deleteMahasiswa = async (_id) => {
-    const res = await fetch('/mahasiswa/:${_id}', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      // .then()
-    const data = await res.json()
-    console.log(data)
-    getDataMahasiswa()
-  }
   
   const getDataMahasiswa = async () => {
     fetch('/data-mahasiswa', {
@@ -52,7 +39,7 @@ const MahasiswaAdmin = () => {
 
   useEffect(() => {
     getDataMahasiswa()
-  },[mahasiswa, searchTerm])
+  },[])
   // console.log(mahasiswa)
 
   return (
@@ -71,7 +58,7 @@ const MahasiswaAdmin = () => {
           <MahasiswaToolbar searchTerm={searchTerm} onSearchChange={handleSearch} />
           <Box sx={{pt: 3 }} >
             {/* <MahasiswaKelasList /> */}
-            <MahasiswaList dataMahasiswa={mahasiswa} deleteMahasiswa={deleteMahasiswa} />
+            <MahasiswaList dataMahasiswa={mahasiswa} />
             {/* <CustomerListResults customers={customers} /> */}
           </Box>
         </Container>

@@ -56,15 +56,15 @@ const headCells = [
   { id: 'programStudi', label: 'Program Studi' }
 ]
 
-const MahasiswaList = ({ dataMahasiswa, deleteMahasiswa, ...rest}) => {
+const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
   const [selectedMahasiswaIds, setSelectedMahasiswaIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('nim')
   const [open, setOpen] = useState(false)
-  const { getValues } = useForm()
-
+  const [mahasiswaData, setMahasiswaData] = useState([])
+  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
@@ -78,7 +78,31 @@ const MahasiswaList = ({ dataMahasiswa, deleteMahasiswa, ...rest}) => {
   const handleClose = () => {
     setOpen(false)
   }
-  
+
+  const deleteMahasiswa = (id) => {
+    console.log("Id user ", id)
+    const res = fetch('/mahasiswa/' + id, {
+      method: 'DELETE'})
+      .then(res => res.json())
+      .then(data => console.log(data))
+  }
+
+  const getMahasiswa = (id) => {
+    handleClickOpen()
+    const res = fetch('/mahasiswa/' + id, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(json => {
+        setMahasiswaData(json)
+        // console.log("Ini data ",data)
+        console.log("Ini mahasiswaData ",mahasiswaData)
+      })
+  }
+  // console.log("Ini data mahasiswaData = ", getMahasiswa("42617024"))
   
   const handleSelectAll = (event) => {
     let newSelectedMahasiswaIds;
@@ -165,18 +189,11 @@ const MahasiswaList = ({ dataMahasiswa, deleteMahasiswa, ...rest}) => {
                     <Button
                       variant="outlined"
                       color="success"
-                      onClick={handleClickOpen}
+                      onClick={(event) => getMahasiswa(mahasiswa._id)}
                     >
                       Edit
                     </Button>
                     <Button
-                      // sx={{
-                      //   // color: red[500],
-                      //   backgroundColor: red[400],
-                      //   '&:hover': {
-                      //     backgroundColor: red[700],
-                      //   },
-                      //   }}
                       color="secondary"
                       variant="outlined"
                       onClick={(event) => deleteMahasiswa(mahasiswa._id)}
@@ -184,7 +201,19 @@ const MahasiswaList = ({ dataMahasiswa, deleteMahasiswa, ...rest}) => {
                       Delete
                     </Button>
                   </TableCell>
+                  <Dialog
+                  open={open}
+                  onClose={handleClose}>
+                  <DialogTitle onClose={handleClose} >Edit Mahasiswa</DialogTitle>
+                  <DialogContent>
+                    <EditMahasiswa 
+                      id={mahasiswa._id}
+                      mahasiswaData={mahasiswaData}
+                    />
+                  </DialogContent>
+                </Dialog>
                 </TableRow>
+                
               )})}
             </TableBody>
           </Table>
@@ -199,15 +228,7 @@ const MahasiswaList = ({ dataMahasiswa, deleteMahasiswa, ...rest}) => {
         rowsPerPage={limit}
         rowsPerPageOptions={[5, 10, 20]}
       />
-      <Dialog
-        open={open}
-        onClose={handleClose}
-      >
-        <DialogTitle onClose={handleClose} >Edit Mahasiswa</DialogTitle>
-        <DialogContent>
-          <EditMahasiswa />
-        </DialogContent>
-      </Dialog>
+      
     </Card>
   )
 };

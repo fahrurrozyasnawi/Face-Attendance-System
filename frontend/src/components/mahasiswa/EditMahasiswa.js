@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {useForm} from 'react-hook-form';
+import PropTypes from 'prop-types'
 import {
   Box,
   Button,
@@ -18,17 +19,18 @@ import angkatan from './List/Angkatan';
 import prodi from './List/Prodi'
 import { Select } from '@material-ui/core';
 
-const EditMahasiswa = ({...rest}) => {
+const EditMahasiswa = (props) => {
+  const { id, mahasiswaData} = props
   const { register, handleSubmit } = useForm();
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("")
   const [type, setType] = useState()
-  const [mahasiswaData, setMahasiswaData] = useState([])
 
   const msgSuccess = (msg = "Data berhasil diinput!", severity='success') => {
     setMessage(msg)
     setType(severity)
   }
+
   const msgError = (msg="Data sudah ada! Harap input data yang baru.", severity='error') => {
     setMessage(msg)
     setType(severity)
@@ -43,10 +45,17 @@ const EditMahasiswa = ({...rest}) => {
     }
     setOpen(false)
   }
+
+  console.log("Ini id = ",id)
   
-  const onUpdate = async (data,id,e) => {
-    e.preventDefault()
-    const res = await fetch('/mahasiswa/${id}', {
+  // console.log(getMahasiswa())
+  console.log("Ini data Mahasiswa = ",mahasiswaData)
+  // console.log("Ini dari setMahasiswaData = ", setMahasiswaData())
+
+  const onSubmit = async (data,event) => {
+    console.log("id dari onSubmit = ", id)
+    // event.preventDefault()
+    const response = await fetch('/mahasiswa/' + id, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -59,24 +68,25 @@ const EditMahasiswa = ({...rest}) => {
         handleSubmit()
         handleClick()
         msgSuccess()
-        console.log(json)
+        console.log(handleSubmit())
+        console.log("Data json = ", data)
       })
       .catch( err => {
         handleClick()
         msgError()
       })
       // data = await res.json()
-      console.log("data form Edit = ",res)
+      // console.log("data form Edit = ",res)
   }
   
-  // console.log("Data getValues = ", getValues)
+  console.log("Data Mahasiswa = ", handleSubmit())
 
   return (
     <form
       autoComplete='off'
-      onSubmit={handleSubmit(onUpdate)}
+      onSubmit={handleSubmit(onSubmit)}
       // noValidate
-      {...rest}
+      {...props}
     >
       <Card>
         <Divider />
@@ -96,7 +106,7 @@ const EditMahasiswa = ({...rest}) => {
                 helperText="Isi nama lengkap mahasiswa"
                 label='Nama Lengkap'
                 required
-                // value={getValues["namaLengkap"]}
+                // value={mahasiswanamaLengkap}
                 variant='outlined'
               />
             </Grid>
@@ -110,7 +120,7 @@ const EditMahasiswa = ({...rest}) => {
                 fullWidth
                 label='NIM'
                 required
-                // value={getValues.nim}
+                // value={nim}
                 variant='outlined'
               />
             </Grid>
@@ -124,6 +134,7 @@ const EditMahasiswa = ({...rest}) => {
                 fullWidth
                 label='Kelas'
                 required
+                // value={kelas}
                 variant='outlined'
               />
             </Grid>
@@ -138,6 +149,7 @@ const EditMahasiswa = ({...rest}) => {
                   {...register("angkatan")}
                   labelId="label-angkatan"
                   label="Angkatan"
+                  // value={dataAngkatan}
                 >
                   {angkatan.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -159,6 +171,7 @@ const EditMahasiswa = ({...rest}) => {
                   {...register("programStudi")}
                   labelId="label-prodi"
                   label="Program Studi"
+                  // value={programStudi}
                 >
                   {prodi.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -207,5 +220,10 @@ const EditMahasiswa = ({...rest}) => {
     </form>
   )
 }
+
+// EditMahasiswa.propTypes = {
+//   mahasiswaData: PropTypes.array.isRequired,
+//   id: PropTypes.string.isRequired
+// };
 
 export default EditMahasiswa
