@@ -1,3 +1,4 @@
+from logging import NullHandler
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo, ObjectId
 from flask_cors import CORS
@@ -131,6 +132,28 @@ def getOneDosen(id):
     }})
   
     return jsonify({'msg': 'Data telah terupdate!!'})
+
+# END API DOSEN
+
+# START API ABSEN
+@app.route('/data-absen/', methods=['GET','POST'])
+def alldataAbsein():
+  dataAbsen = []
+  if request.method == 'POST':
+    absenCol.insert({
+      '_id': request.json['idAbsen'],
+      'namaDosen': request.json['namaDosen'],
+      'nip': request.json['nip'],
+      'tahunAjaran': request.json['tahunAjaran'],
+      'absensi': None
+    })
+
+  if request.method == 'GET':
+    for doc in absenCol.find():
+      # doc['_id'] = doc['_id']
+      dataAbsen.append(doc)
+
+  return jsonify("Tes")
 
 # END API ABSEN
 

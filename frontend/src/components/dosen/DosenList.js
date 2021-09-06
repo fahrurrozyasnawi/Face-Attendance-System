@@ -98,44 +98,13 @@ const DosenList = ({ dataDosen, ...rest }) => {
       })
   }
 
-  const handleSelectAll = (e) => {
-    let newSelectedDosenIds;
 
-    if (e.target.checked) {
-      newSelectedDosenIds = dosens.map((dosen) => dosen.id);
-    } else {
-      newSelectedDosenIds = [];
-    };
-
-    setSelectedDosenIds(newSelectedDosenIds);
-  }
-
-  const handleSelectOne = (e, id) => {
-    const selectedIndex = selectedDosenIds.indexOf(id);
-    let newSelectedDosenIds = [];
-
-    if (selectedIndex === -1) {
-      newSelectedDosenIds = newSelectedDosenIds.concat(selectedDosenIds, id);
-    } else if (selectedIndex === 0) {
-      newSelectedDosenIds = newSelectedDosenIds.concat(selectedDosenIds.slice(1));
-    } else if (selectedIndex = selectedDosenIds.length - 1) {
-      newSelectedDosenIds = newSelectedDosenIds.concat(selectedDosenIds.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelectedDosenIds = newSelectedDosenIds.concat(
-        selectedDosenIds.slice(0, selectedIndex),
-        selectedDosenIds.slice(selectedIndex + 1)
-      );
-    }
-    
-    setSelectedDosenIds(newSelectedDosenIds);
-  }
-
-  const handelLimitChange = (e) => {
+  const handelLimitChange = (event) => {
     setLimit(+event.target.value)
     setPage(0)
   }
   
-  const handlePageChange = (e, newPage) => {
+  const handlePageChange = (event, newPage) => {
     setPage(newPage);
   }
   

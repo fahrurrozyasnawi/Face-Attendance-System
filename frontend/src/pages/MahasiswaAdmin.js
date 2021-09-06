@@ -39,7 +39,7 @@ const MahasiswaAdmin = () => {
 
   useEffect(() => {
     getDataMahasiswa()
-  },[])
+  },[mahasiswa, searchTerm])
   // console.log(mahasiswa)
 
   return (
@@ -57,9 +57,7 @@ const MahasiswaAdmin = () => {
         <Container maxWidth={false} >
           <MahasiswaToolbar searchTerm={searchTerm} onSearchChange={handleSearch} />
           <Box sx={{pt: 3 }} >
-            {/* <MahasiswaKelasList /> */}
             <MahasiswaList dataMahasiswa={mahasiswa} />
-            {/* <CustomerListResults customers={customers} /> */}
           </Box>
         </Container>
       </Box>
