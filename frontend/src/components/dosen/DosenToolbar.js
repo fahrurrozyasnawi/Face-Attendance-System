@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import PropTypes from 'prop-types'
 import { 
   Box,
   Button,
@@ -18,6 +19,7 @@ import { DialogContent } from '@material-ui/core';
  
  const DosenToolbar = (props) => {
    const [open, setOpen] = useState(false);
+   const { searchTerm, onSearchChange} = props
 
    const handleClickOpen = () => {
      setOpen(true);
@@ -34,12 +36,6 @@ import { DialogContent } from '@material-ui/core';
           justifyContent: 'flex-end'
         }}
       >
-        <Button
-          color="secondary"
-          variant="contained"
-          sx={{ mx: 1 }}>
-          Hapus
-        </Button>
         <Button
           color="primary"
           variant="contained"
@@ -84,6 +80,8 @@ import { DialogContent } from '@material-ui/core';
                 }}
                 placeholder="Search customer"
                 variant="outlined"
+                value={searchTerm}
+                onChange={onSearchChange}
               />
             </Box>
           </CardContent>
@@ -92,5 +90,10 @@ import { DialogContent } from '@material-ui/core';
     </Box>
    );
  };
+
+ DosenToolbar.propTypes = {
+  searchTerm: PropTypes.string.isRequired,
+  onSearchChange: PropTypes.func.isRequired
+}
  
  export default DosenToolbar;

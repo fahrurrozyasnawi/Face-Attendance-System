@@ -17,6 +17,7 @@ def allDataMahasiswa():
   #POST Data
   dataMahasiswa = []
   idData = []
+
   if request.method == 'GET':
     for doc in mahasiswaCol.find():
       # doc['_id'] = doc['_id']
@@ -85,6 +86,7 @@ def oneDataMahasiswa(id):
 # API DOSEN
 @app.route('/data-dosen', methods=['GET','POST'])
 def allDataDosen():
+  dataDosen = []
   # POST
   if request.method == 'POST':
     data = dosenCol.insert({
@@ -94,10 +96,41 @@ def allDataDosen():
     'programStudi': request.json['programStudi']
     })
     return jsonify({"status": "Data berhasil disimpan"})
+  
+  if request.method == 'GET':
+    for doc in dosenCol.find():
+      # doc['_id'] = doc['_id']
+      dataDosen.append(doc)
+    return jsonify(dataDosen)
 
 @app.route('/dosen/<id>', methods=['GET','DELETE','PUT'])
 def getOneDosen(id):
-  return "Sukses"
+  #Get one data
+  if request.method == 'GET':
+
+    Dosen = []
+    dataDosen = []
+    dosen = dosenCol.find_one_or_404({'_id': id})
+    Dosen.append(dosen)
+
+    for data in Dosen:
+      dataDosen.append(data)
+    return jsonify(dataDosen)
+  
+  #Delete data
+  if request.method == 'DELETE':
+    dosenCol.delete_one({'_id' : id})
+    return jsonify({'msg' : 'Data telah dihapus'})
+  
+  #Update data
+  if request.method == 'PUT':
+    dosenCol.update_one({'_id': id}, {'$set': {
+    'namaDosen': request.json['namaDosen'],
+    'nip': request.json['nip'],
+    'programStudi': request.json['programStudi']
+    }})
+  
+    return jsonify({'msg': 'Data telah terupdate!!'})
 
 # END API ABSEN
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {useForm} from 'react-hook-form';
 import PropTypes from 'prop-types'
 import {
@@ -15,12 +15,11 @@ import {
   TextField,
   FormControl
 } from '@material-ui/core';
-import angkatan from './List/Angkatan';
-import prodi from './List/Prodi'
+import prodi from 'src/components/mahasiswa/List/Prodi'
 import { Select } from '@material-ui/core';
 
-const EditMahasiswa = (props) => {
-  const { id, mahasiswaData} = props
+const EditDosen = (props) => {
+  const { id, dosenData} = props
   const { register, handleSubmit } = useForm();
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("")
@@ -46,16 +45,9 @@ const EditMahasiswa = (props) => {
     setOpen(false)
   }
 
-  console.log("Ini id = ",id)
-  
-  // console.log(getMahasiswa())
-  console.log("Ini data Mahasiswa = ",mahasiswaData)
-  // console.log("Ini dari setMahasiswaData = ", setMahasiswaData())
-
   const onSubmit = async (data,event) => {
-    console.log("id dari onSubmit = ", id)
     // event.preventDefault()
-    const response = await fetch('/mahasiswa/' + id, {
+    const response = await fetch('/dosen/' + id, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -68,18 +60,13 @@ const EditMahasiswa = (props) => {
         handleSubmit()
         handleClick()
         msgSuccess()
-        console.log(handleSubmit())
-        console.log("Data json = ", data)
+        
       })
       .catch( err => {
         handleClick()
         msgError()
       })
-      // data = await res.json()
-      // console.log("data form Edit = ",res)
   }
-  
-  console.log("Data Mahasiswa = ", handleSubmit())
 
   return (
     <form
@@ -101,64 +88,28 @@ const EditMahasiswa = (props) => {
               xs={12}
             >
               <TextField
-                {...register("namaLengkap")} 
+                {...register("namaDosen")}
                 fullWidth
-                helperText="Isi nama lengkap mahasiswa"
-                label='Nama Lengkap'
+                size="small"
+                label='Nama Dosen'
                 required
-                // value={mahasiswanamaLengkap}
                 variant='outlined'
               />
             </Grid>
             <Grid
               item
-              md={4}
-              xs={12}
-            >
-              <TextField
-                {...register("nim")} 
-                fullWidth
-                label='NIM'
-                required
-                // value={nim}
-                variant='outlined'
-              />
-            </Grid>
-            <Grid
-              item
-              md={4}
+              md={12}
               xs={12}
             >
               <TextField 
-                {...register("kelas")}
+                {...register("nip")}
                 fullWidth
-                label='Kelas'
+                size="small"
+                label='NIP'
+                type="number"
                 required
-                // value={kelas}
-                variant='outlined'
+                variant='outlined'  
               />
-            </Grid>
-            <Grid
-              item
-              md={4}
-              xs={12}
-            >
-              <FormControl variant="outlined" fullWidth >
-                <InputLabel id="label-angkatan">Angkatan</InputLabel>
-                <Select
-                  {...register("angkatan")}
-                  labelId="label-angkatan"
-                  label="Angkatan"
-                  // value={dataAngkatan}
-                >
-                  {angkatan.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              
             </Grid>
             <Grid
               item
@@ -196,7 +147,7 @@ const EditMahasiswa = (props) => {
             color='primary'
             variant='contained'
           >
-            Ubah
+            Ubah Data
           </Button>
         </Box>
         <Snackbar
@@ -221,9 +172,4 @@ const EditMahasiswa = (props) => {
   )
 }
 
-// EditMahasiswa.propTypes = {
-//   mahasiswaData: PropTypes.array.isRequired,
-//   id: PropTypes.string.isRequired
-// };
-
-export default EditMahasiswa
+export default EditDosen

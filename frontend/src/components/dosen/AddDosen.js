@@ -4,15 +4,43 @@ import {
   Box,
   Button,
   Card,
+  Alert,
   CardContent,
-  CardHeader,
-  Divider,
+  Snackbar,
+  InputLabel,
   Grid,
-  TextField
+  MenuItem,
+  TextField,
+  FormControl,
+  Select
 } from '@material-ui/core';
+import prodi from 'src/components/mahasiswa/List/Prodi'
 
 const AddDosen = (props) => {
   const { register, handleSubmit } = useForm();
+  const [open, setOpen] = useState(false)
+  const [message, setMessage] = useState("")
+  const [type, setType] = useState()
+
+  const msgSuccess = (msg = "Data berhasil diinput!", severity='success') => {
+    setMessage(msg)
+    setType(severity)
+  }
+  const msgError = (msg="Data sudah ada! Harap input data yang baru.", severity='error') => {
+    setMessage(msg)
+    setType(severity)
+  }
+
+  const handleClick = () => {
+    setOpen(true)
+  }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway'){
+      return
+    }
+    setOpen(false)
+  }
+
   const onSubmit = (data, e) => {
     e.preventDefault()
     fetch('/data-dosen', {
@@ -23,7 +51,16 @@ const AddDosen = (props) => {
       body: JSON.stringify(data)
     })
       .then(res => res.json())
-      .then(json => handleSubmit())
+      .then(json => {
+        handleSubmit()
+        handleClick()
+        msgSuccess()
+      })
+      .catch( err => {
+        console.log(message)
+        handleClick()
+        msgError()
+      })
       console.log(data)
   }
 
@@ -34,10 +71,6 @@ const AddDosen = (props) => {
       {...props}
     >
       <Card>
-        {/* <CardHeader
-          title='Tambah Dosen'
-        />
-        <Divider /> */}
         <CardContent>
           <Grid
             container
@@ -77,14 +110,20 @@ const AddDosen = (props) => {
               md={12}
               xs={12}
             >
-              <TextField 
-                {...register("programStudi")}
-                fullWidth
-                size="small"
-                label='Program Studi'
-                required
-                variant='outlined'  
-              />
+              <FormControl variant="outlined" fullWidth >
+                <InputLabel id="label-prodi">Program Studi</InputLabel>
+                <Select
+                  {...register("programStudi")}
+                  labelId="label-prodi"
+                  label="Program Studi"
+                >
+                  {prodi.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid
               item
@@ -93,10 +132,27 @@ const AddDosen = (props) => {
                 type="submit"
                 color="primary"
                 variant="contained"
-              >Submit
+              >Simpan
               </Button>
             </Grid>
           </Grid>
+          <Snackbar
+            sx={{
+              justifyContent: 'center'
+            }}
+            open={open} 
+            autoHideDuration={6000} 
+            onClose={handleClose}
+            // message="I love snacks"
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center'
+            }}
+          >
+            <Alert onClose={handleClose} severity={type} >
+              {message}
+            </Alert>
+          </Snackbar>
         </CardContent>
       </Card>
     </form>
