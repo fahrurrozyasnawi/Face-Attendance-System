@@ -39,7 +39,7 @@ const MahasiswaAdmin = () => {
 
   useEffect(() => {
     getDataMahasiswa()
-  },[mahasiswa, searchTerm])
+  },[searchTerm])
   // console.log(mahasiswa)
 
   return (

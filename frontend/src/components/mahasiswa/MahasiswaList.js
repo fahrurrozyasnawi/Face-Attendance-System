@@ -99,7 +99,7 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
       .then(json => {
         setMahasiswaData(json)
         // console.log("Ini data ",data)
-        console.log("Ini mahasiswaData ",mahasiswaData)
+        // console.log("Ini mahasiswaData dari MahasiswaList",mahasiswaData)  
       })
   }
   // console.log("Ini data mahasiswaData = ", getMahasiswa("42617024"))

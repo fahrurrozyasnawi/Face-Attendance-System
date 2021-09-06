@@ -49,7 +49,8 @@ const EditMahasiswa = (props) => {
   console.log("Ini id = ",id)
   
   // console.log(getMahasiswa())
-  console.log("Ini data Mahasiswa = ",mahasiswaData)
+  console.log("Ini data Mahasiswa dari EditMahasiswa = ",mahasiswaData)
+  // console.log("Ini salah satu data Mahasiswa dari EditMahasiswa = ",mahasiswaData[0].namaLengkap)
   // console.log("Ini dari setMahasiswaData = ", setMahasiswaData())
 
   const onSubmit = async (data,event) => {
@@ -68,8 +69,8 @@ const EditMahasiswa = (props) => {
         handleSubmit()
         handleClick()
         msgSuccess()
-        console.log(handleSubmit())
-        console.log("Data json = ", data)
+        // console.log(handleSubmit())
+        // console.log("Data json = ", data)
       })
       .catch( err => {
         handleClick()
@@ -79,12 +80,13 @@ const EditMahasiswa = (props) => {
       // console.log("data form Edit = ",res)
   }
   
-  console.log("Data Mahasiswa = ", handleSubmit())
+  // console.log("Data Mahasiswa = ", handleSubmit())
 
   return (
     <form
       autoComplete='off'
       onSubmit={handleSubmit(onSubmit)}
+      // onChange={getMahasiswa(id)}
       // noValidate
       {...props}
     >
@@ -93,8 +95,7 @@ const EditMahasiswa = (props) => {
         <CardContent>
           <Grid
             container
-            spacing={3}
-          >
+            spacing={3}>
             <Grid
               item
               md={12}
@@ -106,7 +107,7 @@ const EditMahasiswa = (props) => {
                 helperText="Isi nama lengkap mahasiswa"
                 label='Nama Lengkap'
                 required
-                // value={mahasiswanamaLengkap}
+                // defaultValue={mahasiswaData[0].namaLengkap}
                 variant='outlined'
               />
             </Grid>
