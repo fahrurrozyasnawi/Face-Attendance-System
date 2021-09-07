@@ -14,6 +14,9 @@ import Login from 'src/pages/Login'
 import NotFound from 'src/pages/NotFound';
 import Register from 'src/pages/Register';
 import Mahasiswa from './pages/Mahasiswa';
+import AddMahasiswa from 'src/components/mahasiswa/AddMahasiswa'
+import EditMahasiswa from 'src/components/mahasiswa/EditMahasiswa'
+import MahasiswaList from './components/mahasiswa/MahasiswaList';
 
 const routes = [
   {
@@ -33,7 +36,9 @@ const routes = [
       { path: 'dashboard', element: <DashboardAdmin /> },
       { path: 'absensi', element: <AbsensiAdmin /> },
       // { path: 'mahasiswa', element: <MahasiswaAdmin />, children : [
-      //   { path: 'kelas', element: <MahasiswaAdmin /> }
+      //   { path: 'list', element: <MahasiswaList /> },
+      //   { path: 'add', element: <AddMahasiswa /> },
+      //   { path: ':id', element: <EditMahasiswa />}
       // ] },
       { path: 'mahasiswa', element: <MahasiswaAdmin /> },
       { path: 'face', element: <DataWajah /> },
@@ -49,6 +54,7 @@ const routes = [
       { path: '404', element: <NotFound /> },
       { path: '/', element: <Navigate to="/app/dashboard" /> },
       { path: 'admin', element: <Navigate to="/admin/dashboard" /> },
+      // { path: 'mahasiswa', element: <Navigate to="/admin/mahasiswa/list" /> },
       { path: '*', element: <Navigate to="/404" /> }
     ]
   }

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { green, red } from '@material-ui/core/colors';
-import moment from 'moment';
+import { Link, useNavigate } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import {useForm} from 'react-hook-form';
+import { useForm } from 'react-hook-form'
 import {
   Button,
   Box,
@@ -12,15 +12,11 @@ import {
   TableBody,
   TableCell,
   TablePagination,
-  TableRow,
-  DialogTitle,
-  Dialog,
-  DialogContent,
-  Hidden
+  TableRow
 } from '@material-ui/core';
 import groupBy from 'src/utils/groupBy'
 import EnhancedTableHead from 'src/utils/EnhancedTableHead'
-import EditMahasiswa from 'src/components/mahasiswa/EditMahasiswa'
+import EditMahasiswa from './EditMahasiswa';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]){
@@ -56,14 +52,15 @@ const headCells = [
   { id: 'programStudi', label: 'Program Studi' }
 ]
 
-const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
-  const [selectedMahasiswaIds, setSelectedMahasiswaIds] = useState([]);
+const MahasiswaList = (props) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('nim')
   const [open, setOpen] = useState(false)
-  const [mahasiswaData, setMahasiswaData] = useState([])
+  // const [mahasiswaData, setMahasiswaData] = useState({})
+  const [mahasiswaId, setMahasiswaId] = useState("")
+  const [dataMahasiswa, setDataMahasiswa] = useState([])
   
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -80,7 +77,7 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
   }
 
   const deleteMahasiswa = (id) => {
-    console.log("Id user ", id)
+    // console.log("Id user ", id)
     const res = fetch('/mahasiswa/' + id, {
       method: 'DELETE'})
       .then(res => res.json())
@@ -88,54 +85,28 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
   }
 
   const getMahasiswa = (id) => {
+    setMahasiswaId(id)
+    console.log("dari list id = ",mahasiswaId)
+    // const res = fetch('/mahasiswa/' + id, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // })
+    //   .then(res => res.json())
+    //   .then(json => {
+        
+    //     // setMahasiswaData(json)
+    //     // const fields = ['namaLengkap', 'nim', 'angkatan', 'programStudi', 'kelas']
+    //     // fields.forEach(field => setValue(field, mahasiswaData))
+    //     // setMahasiswaData(json)
+    //   })
     handleClickOpen()
-    const res = fetch('/mahasiswa/' + id, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => res.json())
-      .then(json => {
-        setMahasiswaData(json)
-        // console.log("Ini data ",data)
-        // console.log("Ini mahasiswaData dari MahasiswaList",mahasiswaData)  
-      })
   }
-  // console.log("Ini data mahasiswaData = ", getMahasiswa("42617024"))
-  
-  const handleSelectAll = (event) => {
-    let newSelectedMahasiswaIds;
+  // console.log("Ini data mahasiswaId = ", mahasisaId)
 
-    if (event.target.checked) {
-      newSelectedMahasiswaIds = dataMahasiswa.map((mahasiswa) => mahasiswa._id);
-    } else {
-      newSelectedMahasiswaIds = [];
-    }
-    
-    setSelectedMahasiswaIds(newSelectedMahasiswaIds);
-  }
-  
-  const handleSelectOne = (event, _id) => {
-    const selectedIndex = selectedMahasiswaIds.indexOf(_id);
-    let newSelectedMahasiswaIds = [];
+  // useEffect(() => getMahasiswa)
 
-    if (selectedIndex === -1) {
-      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds, _id);
-    } else if (selectedIndex === 0) {
-      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds.slice(1));
-    } else if (selectedIndex === selectedMahasiswaIds.length - 1) {
-      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(selectedMahasiswaIds.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelectedMahasiswaIds = newSelectedMahasiswaIds.concat(
-        selectedMahasiswaIds.slice(0, selectedIndex),
-        selectedMahasiswaIds.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelectedMahasiswaIds(newSelectedMahasiswaIds);
-  }
-  
   const handleLimitChange = (event) => {
     setLimit(+event.target.value)
     setPage(0)
@@ -145,13 +116,30 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
     setPage(newPage);
   }
 
-  const dataPerKelas = groupBy(dataMahasiswa, 'kelas')
-  // console.log(dataPerKelas)
-  // const dataPerProdi = groupBy(dataPerKelas, 'programStudi')
-  // console.log(dataPerProdi)
-  
+  const getDataMahasiswa = () => {
+    fetch('/data-mahasiswa', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        // data = !props.searchTerm
+        //   ? data
+        //   : data.filter(person =>
+        //       person.namaLengkap.toLowerCase().includes(props.searchTerm.toLowerCase()))
+        setDataMahasiswa(data)
+      })
+    }
+
+  useEffect(() => {
+    getDataMahasiswa()
+  },[])
+
   return (
-    <Card {...rest}>
+    <Card>
       <PerfectScrollbar>
         <Box sx={{ minWidth: 1050 }} >
           <Table>
@@ -186,10 +174,11 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
                     {mahasiswa.programStudi}
                   </TableCell>
                   <TableCell>
+                  {/* <Link to={`/admin/mahasiswa/${mahasiswa._id}`} >Edit</Link> */}
                     <Button
                       variant="outlined"
                       color="success"
-                      onClick={(event) => getMahasiswa(mahasiswa._id)}
+                      onClick={(event) => getMahasiswa(mahasiswa._id) }
                     >
                       Edit
                     </Button>
@@ -201,19 +190,13 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
                       Delete
                     </Button>
                   </TableCell>
-                  <Dialog
-                  open={open}
-                  onClose={handleClose}>
-                  <DialogTitle onClose={handleClose} >Edit Mahasiswa</DialogTitle>
-                  <DialogContent>
-                    <EditMahasiswa 
-                      id={mahasiswa._id}
-                      mahasiswaData={mahasiswaData}
-                    />
-                  </DialogContent>
-                </Dialog>
+                  <EditMahasiswa 
+                    id={mahasiswa._id}
+                    // mahasiswaData={mahasiswaData}
+                    open={open}
+                    handleClose={handleClose}
+                  />
                 </TableRow>
-                
               )})}
             </TableBody>
           </Table>
@@ -228,13 +211,12 @@ const MahasiswaList = ({ dataMahasiswa, ...rest}) => {
         rowsPerPage={limit}
         rowsPerPageOptions={[5, 10, 20]}
       />
-      
     </Card>
   )
 };
 
-MahasiswaList.propTypes = {
-  dataMahasiswa: PropTypes.array.isRequired
-};
+// MahasiswaList.propTypes = {
+//   dataMahasiswa: PropTypes.array.isRequired
+// };
 
 export default MahasiswaList;

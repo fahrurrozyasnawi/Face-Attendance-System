@@ -18,10 +18,10 @@ import {
 import prodi from 'src/components/mahasiswa/List/Prodi'
 import { Select } from '@material-ui/core';
 
+
 const EditDosen = (props) => {
-  const { id, dosenData} = props
+  const { id, dosenData, open, handleClose } = props
   const { register, handleSubmit } = useForm();
-  const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("")
   const [type, setType] = useState()
 
@@ -35,18 +35,7 @@ const EditDosen = (props) => {
     setType(severity)
   }
 
-  const handleClick = () => {
-    setOpen(true)
-  }
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway'){
-      return
-    }
-    setOpen(false)
-  }
-
-  const onSubmit = async (data,event) => {
-    // event.preventDefault()
+  const onSubmit = async (data) => {
     const response = await fetch('/dosen/' + id, {
       method: 'PUT',
       headers: {
@@ -57,7 +46,6 @@ const EditDosen = (props) => {
     })
       .then(res => res.json())
       .then(json => {
-        handleSubmit()
         handleClick()
         msgSuccess()
         
@@ -69,11 +57,16 @@ const EditDosen = (props) => {
   }
 
   return (
-    <form
+    <Dialog
+      {...props}
+      open={open}
+      onClose={handleClose}>
+      <DialogTitle onClose={handleClose} >Edit Dosen</DialogTitle>
+      <DialogContent>
+      <form
       autoComplete='off'
       onSubmit={handleSubmit(onSubmit)}
       // noValidate
-      {...props}
     >
       <Card>
         <Divider />
@@ -169,6 +162,8 @@ const EditDosen = (props) => {
         </Snackbar>
       </Card>
     </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

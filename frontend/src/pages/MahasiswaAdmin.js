@@ -8,38 +8,55 @@ import MahasiswaKelasList from 'src/components/mahasiswa/MahasiswaKelasList';
 import MahasiswaList from 'src/components/mahasiswa/MahasiswaList'
 import MahasiswaToolbar from 'src/components/mahasiswa/MahasiswaToolbar';
 import customers from 'src/__mocks__/customers';
-import CustomerListResults from 'src/components/customer/CustomerListResults';
+// import EditMahasiswa from 'src/components/mahasiswa/EditMahasiswa'
+import { Outlet } from 'react-router';
 
 
-const MahasiswaAdmin = () => {
-  const [mahasiswa, setMahasiswa] = useState([])
+const MahasiswaAdmin = (props) => {
+  const [dataMahasiswa, setDataMahasiswa] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value)
   }
-  
-  const getDataMahasiswa = async () => {
-    fetch('/data-mahasiswa', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        data = !searchTerm
-          ? data
-          : data.filter(person =>
-              person.namaLengkap.toLowerCase().includes(searchTerm.toLowerCase()))
-        setMahasiswa(data)
-      })
-    }
 
-  useEffect(() => {
-    getDataMahasiswa()
-  },[searchTerm])
+  const addDataToState = (mahasiswa) =>{
+    setDataMahasiswa([...dataMahasiswa, mahasiswa])
+  }
+  
+  const updateState = (mahasiswa) => {
+    const mahasiswaIndex = dataMahasiswa.findIndex(data => data._id === mahasiswa._id)
+    const newArray = [...dataMahasiswa.slice(0, mahasiswaIndex), mahasiswa, ...dataMahasiswa.slice(mahasiswaIndex + 1)]
+    setDataMahasiswa(newArray)  
+  }
+
+  const deleteFromState = (id) => {
+    const updatedDataMahasiswa = dataMahasiswa.filter(mahasiswa => mahasiswa.id !== id)
+    setDataMahasiswa(updatedDataMahasiswa)  
+  }
+  
+  
+  // const getDataMahasiswa = async () => {
+  //   fetch('/data-mahasiswa', {
+  //     method: 'GET',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json'
+  //     }
+  //   })
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       data = !searchTerm
+  //         ? data
+  //         : data.filter(person =>
+  //             person.namaLengkap.toLowerCase().includes(searchTerm.toLowerCase()))
+  //       setDataMahasiswa(data)
+  //     })
+  //   }
+
+  // useEffect(() => {
+  //   getDataMahasiswa()
+  // },[])
   // console.log(mahasiswa)
 
   return (
@@ -57,7 +74,8 @@ const MahasiswaAdmin = () => {
         <Container maxWidth={false} >
           <MahasiswaToolbar searchTerm={searchTerm} onSearchChange={handleSearch} />
           <Box sx={{pt: 3 }} >
-            <MahasiswaList dataMahasiswa={mahasiswa} />
+            <MahasiswaList />
+            {/* <Outlet /> */}
           </Box>
         </Container>
       </Box>

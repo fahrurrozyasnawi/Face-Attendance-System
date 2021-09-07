@@ -154,19 +154,13 @@ const DosenList = ({ dataDosen, ...rest }) => {
                       Delete
                     </Button>
                   </TableCell>
-                  <Dialog
-                  open={open}
-                  onClose={handleClose}>
-                  <DialogTitle onClose={handleClose} >Edit Dosen</DialogTitle>
-                  <DialogContent>
-                    <EditDosen 
+                  <EditDosen 
                       id={dosen._id}
                       mahasiswaData={dosenData}
+                      open={open}
+                      handleClose={handleClose}
                     />
-                  </DialogContent>
-                </Dialog>
                 </TableRow>
-                
               )})}
             </TableBody>
           </Table>

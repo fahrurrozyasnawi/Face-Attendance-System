@@ -17,7 +17,7 @@ import AddMahasiswa from 'src/components/mahasiswa/AddMahasiswa';
 
 const MahasiswaToolbar = (props) => {
   const [open, setOpen] = useState(false);
-  const { searchTerm, onSearchChange} = props
+  // const { searchTerm, onSearchChange} = props
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -71,8 +71,8 @@ const MahasiswaToolbar = (props) => {
               }}
               placeholder="Search Mahasiswa"
               variant="outlined"
-              value={searchTerm}
-              onChange={onSearchChange}
+              value={props.searchTerm}
+              onChange={props.onSearchChange}
             />
           </Box>
         </CardContent>
@@ -82,9 +82,9 @@ const MahasiswaToolbar = (props) => {
   );
 };
 
-MahasiswaToolbar.propTypes = {
-  searchTerm: PropTypes.string.isRequired,
-  onSearchChange: PropTypes.func.isRequired
-}
+// MahasiswaToolbar.propTypes = {
+//   searchTerm: PropTypes.string.isRequired,
+//   onSearchChange: PropTypes.func.isRequired
+// }
 
 export default MahasiswaToolbar;
