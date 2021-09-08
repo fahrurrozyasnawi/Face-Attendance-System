@@ -1,5 +1,5 @@
 from logging import NullHandler
-from flask import Flask, request, jsonify
+from flask import Flask, json, request, jsonify
 from flask_pymongo import PyMongo, ObjectId
 from flask_cors import CORS
 
@@ -137,24 +137,70 @@ def getOneDosen(id):
 
 # START API ABSEN
 @app.route('/data-absen/', methods=['GET','POST'])
-def alldataAbsein():
+def alldataAbsen():
   dataAbsen = []
   if request.method == 'POST':
     absenCol.insert({
       '_id': request.json['idAbsen'],
       'namaDosen': request.json['namaDosen'],
       'nip': request.json['nip'],
+      'kelas': request.json['kelas'],
+      'programStudi': request.json['programStudi'],
+      'mataKuliah': request.json['mataKuliah'],
+      'tglAbsen': request.json['tglAbsen'],
       'tahunAjaran': request.json['tahunAjaran'],
-      'absensi': None
+      'waktuAbsen': request.json['waktuAbsen'],
+      'mahasiswa' : [{
+        'namaLengkap': request.json['namaLengkap'],
+        'nim': request.json['nim'],
+        'status': None
+      }]
     })
+    return jsonify({'status': "Data telah disimpan"})
 
   if request.method == 'GET':
     for doc in absenCol.find():
       # doc['_id'] = doc['_id']
       dataAbsen.append(doc)
+      return jsonify(dataAbsen)
+@app.route('/absen/<id>', methods=['GET', 'PUT', 'DELETE'])
+def oneDataAbsen(id):
+  #get
+  if request.method == 'GET':
+    Absen = []
+    dataAbsen = []
+    absen = absenCol.find_one_or_404({'_id': id})
+    Absen.append(absen)
 
-  return jsonify("Tes")
-
+    for data in Absen:
+      dataAbsen.append(data)
+    
+    return jsonify(dataAbsen)
+  
+  #delete
+  if request.method == 'DELETE':
+    absenCol.delete_one({'_id': id})
+    return jsonify({'status': "Data telah dihapus"})
+  
+  #update
+  if request.method == 'PUT':
+    absenCol.update_one({'_id': id}, {'$set': {
+      'namaDosen': request.json['namaDosen'],
+      'nip': request.json['nip'],
+      'kelas': request.json['kelas'],
+      'programStudi': request.json['programStudi'],
+      'mataKuliah': request.json['mataKuliah'],
+      'tglAbsen': request.json['tglAbsen'],
+      'tahunAjaran': request.json['tahunAjaran'],
+      'waktuAbsen': request.json['waktuAbsen'],
+      'mahasiswa' : [{
+        'namaLengkap': request.json['namaLengkap'],
+        'nim': request.json['nim'],
+        'status': None
+      }]
+    }})
+    return jsonify({'msg': 'Data telah disimpan'})
+  
 # END API ABSEN
 
 if __name__ == "__main__":
