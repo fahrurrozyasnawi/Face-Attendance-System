@@ -35,12 +35,12 @@ const routes = [
     children: [
       { path: 'dashboard', element: <DashboardAdmin /> },
       { path: 'absensi', element: <AbsensiAdmin /> },
-      // { path: 'mahasiswa', element: <MahasiswaAdmin />, children : [
-      //   { path: 'list', element: <MahasiswaList /> },
-      //   { path: 'add', element: <AddMahasiswa /> },
-      //   { path: ':id', element: <EditMahasiswa />}
-      // ] },
-      { path: 'mahasiswa', element: <MahasiswaAdmin /> },
+      { path: 'mahasiswa', element: <MahasiswaAdmin />, children : [
+        { path: 'list', element: <MahasiswaList /> },
+        { path: 'add', element: <AddMahasiswa /> },
+        { path: ':id', element: <EditMahasiswa />}
+      ] },
+      // { path: 'mahasiswa', element: <MahasiswaAdmin /> },
       { path: 'face', element: <DataWajah /> },
       { path: 'dosen', element: <Dosen /> },
       { path: '*', element: <Navigate to="/404" /> }
@@ -54,7 +54,7 @@ const routes = [
       { path: '404', element: <NotFound /> },
       { path: '/', element: <Navigate to="/app/dashboard" /> },
       { path: 'admin', element: <Navigate to="/admin/dashboard" /> },
-      // { path: 'mahasiswa', element: <Navigate to="/admin/mahasiswa/list" /> },
+      { path: 'mahasiswa', element: <Navigate to="/admin/mahasiswa/list" /> },
       { path: '*', element: <Navigate to="/404" /> }
     ]
   }

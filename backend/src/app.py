@@ -76,7 +76,7 @@ def oneDataMahasiswa(id):
     'namaLengkap': request.json['namaLengkap'],
     'nim': request.json['nim'],
     'kelas': request.json['kelas'],
-    'angkatan': request.json['angkatan'],
+    'angkatan': str(request.json['angkatan']),
     'programStudi': request.json['programStudi']
     }})
   
@@ -93,7 +93,7 @@ def allDataDosen():
     data = dosenCol.insert({
     '_id' : request.json['nip'],
     'namaDosen': request.json['namaDosen'],
-    'nip': request.json['nip'],
+    'nip': str(request.json['nip']),
     'programStudi': request.json['programStudi']
     })
     return jsonify({"status": "Data berhasil disimpan"})
@@ -127,7 +127,7 @@ def getOneDosen(id):
   if request.method == 'PUT':
     dosenCol.update_one({'_id': id}, {'$set': {
     'namaDosen': request.json['namaDosen'],
-    'nip': request.json['nip'],
+    'nip': str(request.json['nip']),
     'programStudi': request.json['programStudi']
     }})
   
@@ -136,25 +136,30 @@ def getOneDosen(id):
 # END API DOSEN
 
 # START API ABSEN
-@app.route('/data-absen/', methods=['GET','POST'])
+@app.route('/data-absen', methods=['GET','POST'])
 def alldataAbsen():
   dataAbsen = []
+  mahasiswa = []
+
   if request.method == 'POST':
+    idAbsen = request.json['programStudi'][1] + request.json['kelas'][1] + request.json['namaDosen'][1]
+    kelas = request.json['kelas'][0]
+    for doc in mahasiswaCol.find({'kelas': kelas}, 
+    {'kelas': 0, 'angkatan': 0, 'programStudi': 0}):
+      mahasiswa.append(doc)
+
+    # Input to db
     absenCol.insert({
-      '_id': request.json['idAbsen'],
-      'namaDosen': request.json['namaDosen'],
-      'nip': request.json['nip'],
-      'kelas': request.json['kelas'],
-      'programStudi': request.json['programStudi'],
-      'mataKuliah': request.json['mataKuliah'],
-      'tglAbsen': request.json['tglAbsen'],
+      '_id': idAbsen,
+      'namaDosen': request.json['namaDosen'][0],
+      'nip': request.json['namaDosen'][1],
+      'kelas': request.json['kelas'][0],
+      'programStudi': request.json['programStudi'][0],
+      'mataKuliah': request.json['mataKuliah'][0],
       'tahunAjaran': request.json['tahunAjaran'],
-      'waktuAbsen': request.json['waktuAbsen'],
-      'mahasiswa' : [{
-        'namaLengkap': request.json['namaLengkap'],
-        'nim': request.json['nim'],
-        'status': None
-      }]
+      'waktuAbsen': None,
+      'tglAbsen': None,
+      'mahasiswa' : mahasiswa
     })
     return jsonify({'status': "Data telah disimpan"})
 
@@ -163,8 +168,25 @@ def alldataAbsen():
       # doc['_id'] = doc['_id']
       dataAbsen.append(doc)
       return jsonify(dataAbsen)
+
+# @app.route('/absen/mahasiswa', methods=['GET'])
+# def getMahasiswaData():
+#   list = mahasiswaCol.aggregate([
+#     {
+#       '$group' : {
+#         '_id': {
+#         'kelas': '$kelas',
+#         'angkatan' : '$angkatan',
+#         'programStudi': '$programStudi'
+#         }
+#     }}
+#   ])
+
+#   return jsonify(list)
+
 @app.route('/absen/<id>', methods=['GET', 'PUT', 'DELETE'])
 def oneDataAbsen(id):
+  mahasiswa = []
   #get
   if request.method == 'GET':
     Absen = []
@@ -184,20 +206,21 @@ def oneDataAbsen(id):
   
   #update
   if request.method == 'PUT':
+    kelas = request.json['kelas'][0]
+    for doc in mahasiswaCol.find({'kelas': kelas}, 
+    {'kelas': 0, 'angkatan': 0, 'programStudi': 0}):
+      mahasiswa.append(doc)
+
     absenCol.update_one({'_id': id}, {'$set': {
-      'namaDosen': request.json['namaDosen'],
-      'nip': request.json['nip'],
-      'kelas': request.json['kelas'],
-      'programStudi': request.json['programStudi'],
-      'mataKuliah': request.json['mataKuliah'],
-      'tglAbsen': request.json['tglAbsen'],
+      'namaDosen': request.json['namaDosen'][0],
+      'nip': request.json['nip'][1],
+      'kelas': request.json['kelas'][0],
+      'programStudi': request.json['programStudi'][0],
+      'mataKuliah': request.json['mataKuliah'][0],
       'tahunAjaran': request.json['tahunAjaran'],
-      'waktuAbsen': request.json['waktuAbsen'],
-      'mahasiswa' : [{
-        'namaLengkap': request.json['namaLengkap'],
-        'nim': request.json['nim'],
-        'status': None
-      }]
+      'waktuAbsen': None,
+      'tglAbsen': None,
+      'mahasiswa' : mahasiswa
     }})
     return jsonify({'msg': 'Data telah disimpan'})
   

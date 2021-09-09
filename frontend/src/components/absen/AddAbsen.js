@@ -12,19 +12,75 @@ import {
   Grid,
   MenuItem,
   TextField,
+  Select,
   FormControl
 } from '@material-ui/core';
-import angkatan from './List/Angkatan';
-import prodi from './List/Prodi'
-import { Select } from '@material-ui/core';
+import prodi from 'src/components/mahasiswa/List/Prodi'
+import kelas from 'src/__mocks__/Kelas'
+import matkul from 'src/__mocks__/Matkul'
+import tAjar from 'src/__mocks__/TahunAjaran'
+import groupBy from 'src/utils/groupBy'
 
-
-const AddMahasiswa = (props) => {
+const AddAbsen = (props) => {
   const { register, handleSubmit } = useForm();
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("")
   const [type, setType] = useState()
+  const [value, setValue] = useState("Tes")
+  const [dosenData, setDosenData] = useState([])
+  const [mahasiswaData, setMahasiswaData] = useState([])
 
+  // GET Data from Mahasiswa and Dosen
+
+  const getDataDosen = () => {
+    fetch('/data-dosen', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        const dataDosen = data.map((dosen, i) => ({
+          label: dosen.namaDosen,
+          value: [dosen.namaDosen, dosen.nip]
+        }))
+        setDosenData(dataDosen)
+      })
+  }
+
+  const getDataMahasiswa = () => {
+    fetch('/data-mahasiswa', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        // const dataMahasiswa = data.map((mahasiswa) => ({
+        //   label: mahasiswa.kelas,
+        //   value: {
+
+        //   }
+        // }))
+        setMahasiswaData(data)
+      })
+  }
+  
+  useEffect(() => {
+    getDataMahasiswa()
+    getDataDosen()
+  },[])
+
+  console.log("Mahasiswa = ", mahasiswaData)
+  console.log("Dosen = ", dosenData)
+  //Make dropdown list
+  const byKelas = groupBy(mahasiswaData, 'kelas')
+  console.log("Group Kelas ",byKelas)
+  
   const msgSuccess = (msg = "Data berhasil diinput!", severity='success') => {
     setMessage(msg)
     setType(severity)
@@ -43,12 +99,10 @@ const AddMahasiswa = (props) => {
     }
     setOpen(false)
   }
-  
-  // useEffect(() => {
-  // }  
+
   const onSubmit = async (data, e) => {
     e.preventDefault()
-    const response = await fetch('/data-mahasiswa', {
+    const response = await fetch('/data-absen', {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json'
@@ -73,8 +127,6 @@ const AddMahasiswa = (props) => {
     <form
       autoComplete='off'
       onSubmit={handleSubmit(onSubmit)}
-      // noValidate
-      {...props}
     >
       <Card>
         <Divider />
@@ -88,61 +140,80 @@ const AddMahasiswa = (props) => {
               md={12}
               xs={12}
             >
-              <TextField
-                {...register("namaLengkap")} 
-                fullWidth
-                helperText="Isi nama lengkap mahasiswa"
-                label='Nama Lengkap'
-                required
-                variant='outlined'
-              />
-            </Grid>
-            <Grid
-              item
-              md={4}
-              xs={12}
-            >
-              <TextField
-                {...register("nim")} 
-                fullWidth
-                label='NIM'
-                required
-                variant='outlined'
-              />
-            </Grid>
-            <Grid
-              item
-              md={4}
-              xs={12}
-            >
-              <TextField 
-                {...register("kelas")}
-                fullWidth
-                label='Kelas'
-                required
-                variant='outlined'
-              />
-            </Grid>
-            <Grid
-              item
-              md={4}
-              xs={12}
-            >
               <FormControl variant="outlined" fullWidth >
-                <InputLabel id="label-angkatan">Angkatan</InputLabel>
+                <InputLabel id="label-angkatan">Dosen</InputLabel>
                 <Select
-                  {...register("angkatan")}
+                  {...register("namaDosen")}
                   labelId="label-angkatan"
                   label="Angkatan"
                 >
-                  {angkatan.map((option) => (
+                  {dosenData.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              
+            </Grid>
+            <Grid
+              item
+              md={12}
+              xs={12}
+            >
+              <FormControl variant="outlined" fullWidth >
+                <InputLabel id="label-angkatan">Tahun Ajaran</InputLabel>
+                <Select
+                  {...register("tahunAjaran")}
+                  labelId="label-angkatan"
+                  label="Tahun Ajaran"
+                >
+                  {tAjar.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid
+              item
+              md={12}
+              xs={12}
+            >
+              <FormControl variant="outlined" fullWidth >
+                <InputLabel id="label-angkatan">Mata Kuliah</InputLabel>
+                <Select
+                  {...register("mataKuliah")}
+                  labelId="label-angkatan"
+                  label="Mata Kuliah"
+                >
+                  {matkul.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid
+              item
+              md={12}
+              xs={12}
+            >
+              <FormControl variant="outlined" fullWidth >
+                <InputLabel id="label-angkatan">Kelas</InputLabel>
+                <Select
+                  {...register("kelas")}
+                  labelId="label-angkatan"
+                  label="Kelas"
+                >
+                  {kelas.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid
               item
@@ -201,7 +272,7 @@ const AddMahasiswa = (props) => {
         </Snackbar>
       </Card>
     </form>
-  );
-};
+  )
+}
 
-export default AddMahasiswa;
+export default AddAbsen

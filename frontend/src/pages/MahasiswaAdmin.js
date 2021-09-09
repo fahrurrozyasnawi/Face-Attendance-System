@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import {
   Container,
   Box
 } from '@material-ui/core';
 import MahasiswaKelasList from 'src/components/mahasiswa/MahasiswaKelasList';
 import MahasiswaList from 'src/components/mahasiswa/MahasiswaList'
+import EditMahasiswa from 'src/components/mahasiswa/EditMahasiswa'
 import MahasiswaToolbar from 'src/components/mahasiswa/MahasiswaToolbar';
 import customers from 'src/__mocks__/customers';
 // import EditMahasiswa from 'src/components/mahasiswa/EditMahasiswa'
@@ -15,6 +17,7 @@ import { Outlet } from 'react-router';
 const MahasiswaAdmin = (props) => {
   const [dataMahasiswa, setDataMahasiswa] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
+  const pathLink = "/admin/mahasiswa"
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value)
@@ -74,6 +77,11 @@ const MahasiswaAdmin = (props) => {
         <Container maxWidth={false} >
           <MahasiswaToolbar searchTerm={searchTerm} onSearchChange={handleSearch} />
           <Box sx={{pt: 3 }} >
+            {/* <Router>
+              <Routes>
+                <Route exact path={`${pathLink}/list`} component={MahasiswaList} />
+              </Routes>
+            </Router> */}
             <MahasiswaList />
             {/* <Outlet /> */}
           </Box>

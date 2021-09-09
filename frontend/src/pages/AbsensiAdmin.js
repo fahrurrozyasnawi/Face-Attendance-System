@@ -1,19 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import {
-  Box,
-  Typography
+  Container,
+  Box
 } from '@material-ui/core';
+import AbsenToolbar from 'src/components/absen/AbsenToolbar'
+import AbsenList from 'src/components/absen/AbsenList'
 
-const AbsensiAdmin = () => {
+const AbsensiAdmin = (props) => {
+
   return (
-    <Box sx={{
-      py : 2,
-      px : 2
-    }}>
-      <Typography variant="h3" >
-        Absensi
-      </Typography>
-    </Box>
+    <>
+      <Helmet>
+        <title>Mahasiswa | Face Attendance</title>
+      </Helmet>
+      <Box
+        sx={{
+          backgroundColor: 'background.default',
+          minHeight: '100%',
+          py: 2
+        }}
+      >
+        <Container maxWidth={false} >
+          <AbsenToolbar searchTerm={props.searchTerm} onSearchChange={props.onSearchChange} />
+          <Box sx={{pt: 3 }} >
+            <AbsenList />
+          </Box>
+        </Container>
+      </Box>
+    </>
   );
 };
 

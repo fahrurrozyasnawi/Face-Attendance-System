@@ -65,6 +65,7 @@ const EditMahasiswa = (props) => {
       .then(res => res.json())
       .then(data => {
         msgSuccess()
+        console.log(msgSuccess())
       })
       .catch( err => msgError())
   }
@@ -90,7 +91,7 @@ const EditMahasiswa = (props) => {
           setMahasiswaData(mahasiswaData)
           console.log("SetValue data = ", mahasiswaData)
         })
-  })
+  }, [])
 
   console.log("Edit mahasiswa data from mahasiswaData = ",mahasiswaData)
   // console.log("Nilai setValue = ", setValue())
