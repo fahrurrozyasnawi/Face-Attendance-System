@@ -166,6 +166,15 @@ const DosenList = ({ dataDosen, ...rest }) => {
           </Table>
         </Box>
       </PerfectScrollbar>
+      <TablePagination 
+        component="div"
+        count={dataDosen.length}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handelLimitChange}
+        page={page}
+        rowsPerPage={limit}
+        rowsPerPageOptions={[5, 10, 20]}
+      />
     </Card>
   );
 };

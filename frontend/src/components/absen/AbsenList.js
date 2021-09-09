@@ -107,6 +107,7 @@ const AbsenList = (props) => {
     })
       .then(res => res.json())
       .then(data => {
+        console.log("ini data ", data)
         // data = !props.searchTerm
         //   ? data
         //   : data.filter(person =>
@@ -114,9 +115,10 @@ const AbsenList = (props) => {
         setDataAbsen(data)
       })
     }
-  useEffect(() =>{
+  useEffect(() => {
     getDataAbsen()
-  }, [])
+  },[])
+
   console.log("data absen list ", dataAbsen)
   return (
     <Card>

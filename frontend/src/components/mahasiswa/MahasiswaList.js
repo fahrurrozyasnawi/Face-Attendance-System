@@ -138,6 +138,7 @@ const MahasiswaList = (props) => {
     getDataMahasiswa()
   },[])
 
+  console.log("data mahasiswa list ", dataMahasiswa)
   return (
     <Card>
       <PerfectScrollbar>

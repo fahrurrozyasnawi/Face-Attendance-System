@@ -23,10 +23,13 @@ import { Select } from '@material-ui/core';
 
 
 const EditDosen = (props) => {
-  const { id, dosenData, open, handleClose } = props
-  const { register, handleSubmit } = useForm();
+  const id = props.id
+  const { 
+    register, handleSubmit, reset, setValue, getValues, errors, formState 
+  } = useForm()
   const [message, setMessage] = useState("")
   const [type, setType] = useState()
+  const [open, setOpen] = useState(false)
 
   const msgSuccess = (msg = "Data berhasil diinput!", severity='success') => {
     setMessage(msg)
@@ -36,6 +39,17 @@ const EditDosen = (props) => {
   const msgError = (msg="Data sudah ada! Harap input data yang baru.", severity='error') => {
     setMessage(msg)
     setType(severity)
+  }
+
+  const handleClick = () => {
+    setOpen(true)
+  }
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway'){
+      return
+    }
+    setOpen(false)
   }
 
   const onSubmit = async (data) => {
@@ -61,14 +75,15 @@ const EditDosen = (props) => {
 
   return (
     <Dialog
-      {...props}
-      open={open}
-      onClose={handleClose}>
-      <DialogTitle onClose={handleClose} >Edit Dosen</DialogTitle>
+      // {...props}
+      open={props.open}
+      onClose={props.handleClose}>
+      <DialogTitle onClose={props.handleClose} >Edit Dosen</DialogTitle>
       <DialogContent>
       <form
       autoComplete='off'
       onSubmit={handleSubmit(onSubmit)}
+      onReset={reset}
       // noValidate
     >
       <Card>
@@ -152,14 +167,14 @@ const EditDosen = (props) => {
           }}
           open={open} 
           autoHideDuration={6000} 
-          onClose={handleClose}
+          onClose={handleCloseSnackbar}
           // message="I love snacks"
           anchorOrigin={{
             vertical: 'bottom',
             horizontal: 'center'
           }}
         >
-          <Alert onClose={handleClose} severity={type} >
+          <Alert onClose={handleCloseSnackbar} severity={type} >
             {message}
           </Alert>
         </Snackbar>

@@ -128,7 +128,7 @@ def getOneDosen(id):
     dosenCol.update_one({'_id': id}, {'$set': {
     'namaDosen': request.json['namaDosen'],
     'nip': str(request.json['nip']),
-    'programStudi': request.json['programStudi']
+    'programStudi': request.json['programStudi'][0]
     }})
   
     return jsonify({'msg': 'Data telah terupdate!!'})
@@ -167,7 +167,7 @@ def alldataAbsen():
     for doc in absenCol.find():
       # doc['_id'] = doc['_id']
       dataAbsen.append(doc)
-      return jsonify(dataAbsen)
+    return jsonify(dataAbsen)
 
 # @app.route('/absen/mahasiswa', methods=['GET'])
 # def getMahasiswaData():
