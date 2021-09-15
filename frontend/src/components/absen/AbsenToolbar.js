@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'
 import {
   Box,
@@ -14,10 +14,13 @@ import {
 import { Search as SearchIcon } from 'react-feather';
 import { DialogContent } from '@material-ui/core';
 import AddAbsen from 'src/components/absen/AddAbsen'
+import AbsenList from './AbsenList';
 
 
 const AbsenToolbar = (props) => {
   const [open, setOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("")
+  const [dataAbsen, setDataAbsen] = useState([])
   // const { searchTerm, onSearchChange} = props
 
   const handleClickOpen = () => {
@@ -26,6 +29,34 @@ const AbsenToolbar = (props) => {
   const handleClose = () => {
     setOpen(false);
   }
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value)
+  }
+
+  const getDataAbsen = () => {
+    fetch('/data-absen', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("ini data ", data)
+        data = !props.searchTerm
+          ? data
+          : data.filter(person =>
+              person.namaDosen.toLowerCase().includes(props.searchTerm.toLowerCase()))
+        setDataAbsen(data)
+      })
+    }
+  useEffect(() => {
+    getDataAbsen()
+  },[searchTerm])
+
+  console.log("data absen list ", dataAbsen)
 
   return (
     <Box {...props}>
@@ -73,12 +104,15 @@ const AbsenToolbar = (props) => {
                 }}
                 placeholder="Search Absen"
                 variant="outlined"
-                value={props.searchTerm}
-                onChange={props.onSearchChange}
+                value={searchTerm}
+                onChange={handleSearch}
               />
             </Box>
           </CardContent>
         </Card>
+      </Box>
+      <Box sx={{pt: 3 }} >
+        <AbsenList dataAbsen={dataAbsen} />
       </Box>
     </Box>
   )

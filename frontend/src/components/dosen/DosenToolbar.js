@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'
 import { 
   Box,
@@ -16,10 +16,12 @@ import AddDosen from 'src/components/dosen/AddDosen';
 import { Search as SearchIcon } from 'react-feather';
 import { Dialog } from '@material-ui/core';
 import { DialogContent } from '@material-ui/core';
+import DosenList from './DosenList';
  
  const DosenToolbar = (props) => {
    const [open, setOpen] = useState(false);
-   const { searchTerm, onSearchChange} = props
+   const [dataDosen, setDataDosen] = useState([])
+   const [searchTerm, setSearchTerm] = useState("")
 
    const handleClickOpen = () => {
      setOpen(true);
@@ -27,6 +29,32 @@ import { DialogContent } from '@material-ui/core';
    const handleClose = () => {
      setOpen(false);
    }
+
+   const handleSearch = (event) => {
+    setSearchTerm(event.target.value)
+  }
+  
+  const getDataDosen = async () => {
+    fetch('/data-dosen', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        data = !searchTerm
+          ? data
+          : data.filter(person =>
+              person.namaDosen.toLowerCase().includes(searchTerm.toLowerCase()))
+        setDataDosen(data)
+      })
+    }
+
+  useEffect(() => {
+    getDataDosen()
+  },[searchTerm])
    
    return (
     <Box {...props}>
@@ -81,19 +109,17 @@ import { DialogContent } from '@material-ui/core';
                 placeholder="Search customer"
                 variant="outlined"
                 value={searchTerm}
-                onChange={onSearchChange}
+                onChange={handleSearch}
               />
             </Box>
           </CardContent>
         </Card>
       </Box>
+      <Box sx={{ pt: 3 }}>
+        <DosenList dataDosen={dataDosen} />
+      </Box>
     </Box>
    );
  };
-
- DosenToolbar.propTypes = {
-  searchTerm: PropTypes.string.isRequired,
-  onSearchChange: PropTypes.func.isRequired
-}
  
  export default DosenToolbar;

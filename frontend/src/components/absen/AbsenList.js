@@ -97,29 +97,7 @@ const AbsenList = (props) => {
     handleClickOpen()
   }
 
-  const getDataAbsen = () => {
-    fetch('/data-absen', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log("ini data ", data)
-        // data = !props.searchTerm
-        //   ? data
-        //   : data.filter(person =>
-        //       person.namaLengkap.toLowerCase().includes(props.searchTerm.toLowerCase()))
-        setDataAbsen(data)
-      })
-    }
-  useEffect(() => {
-    getDataAbsen()
-  },[])
-
-  console.log("data absen list ", dataAbsen)
+  
   return (
     <Card>
       <PerfectScrollbar>
@@ -132,7 +110,7 @@ const AbsenList = (props) => {
               headCells={headCells}
             />
             <TableBody>
-              {stableSort(dataAbsen, getComparator(order, orderBy))
+              {stableSort(props.dataAbsen, getComparator(order, orderBy))
                 .slice(page * limit, page * limit + limit)
                 .map((absen, index) => {
                   return(
@@ -183,7 +161,7 @@ const AbsenList = (props) => {
       </PerfectScrollbar>
       <TablePagination 
         component="div"
-        count={dataAbsen.length}
+        count={props.dataAbsen.length}
         onPageChange={hanldePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}

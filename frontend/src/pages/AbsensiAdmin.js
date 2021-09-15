@@ -6,6 +6,7 @@ import {
 } from '@material-ui/core';
 import AbsenToolbar from 'src/components/absen/AbsenToolbar'
 import AbsenList from 'src/components/absen/AbsenList'
+import { Outlet } from 'react-router';
 
 const AbsensiAdmin = (props) => {
 
@@ -22,10 +23,7 @@ const AbsensiAdmin = (props) => {
         }}
       >
         <Container maxWidth={false} >
-          <AbsenToolbar searchTerm={props.searchTerm} onSearchChange={props.onSearchChange} />
-          <Box sx={{pt: 3 }} >
-            <AbsenList />
-          </Box>
+          <Outlet />
         </Container>
       </Box>
     </>

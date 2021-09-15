@@ -6,7 +6,7 @@ import {
   Box
 } from '@material-ui/core';
 import MahasiswaKelasList from 'src/components/mahasiswa/MahasiswaKelasList';
-import MahasiswaList from 'src/components/mahasiswa/MahasiswaList'
+
 import EditMahasiswa from 'src/components/mahasiswa/EditMahasiswa'
 import MahasiswaToolbar from 'src/components/mahasiswa/MahasiswaToolbar';
 import customers from 'src/__mocks__/customers';
@@ -17,11 +17,11 @@ import { Outlet } from 'react-router';
 const MahasiswaAdmin = (props) => {
   const [dataMahasiswa, setDataMahasiswa] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
-  const pathLink = "/admin/mahasiswa"
+  // const pathLink = "/admin/mahasiswa"
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value)
-  }
+  // const handleSearch = (event) => {
+  //   setSearchTerm(event.target.value)
+  // }
 
   const addDataToState = (mahasiswa) =>{
     setDataMahasiswa([...dataMahasiswa, mahasiswa])
@@ -37,30 +37,6 @@ const MahasiswaAdmin = (props) => {
     const updatedDataMahasiswa = dataMahasiswa.filter(mahasiswa => mahasiswa.id !== id)
     setDataMahasiswa(updatedDataMahasiswa)  
   }
-  
-  
-  // const getDataMahasiswa = async () => {
-  //   fetch('/data-mahasiswa', {
-  //     method: 'GET',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json'
-  //     }
-  //   })
-  //     .then(res => res.json())
-  //     .then(data => {
-  //       data = !searchTerm
-  //         ? data
-  //         : data.filter(person =>
-  //             person.namaLengkap.toLowerCase().includes(searchTerm.toLowerCase()))
-  //       setDataMahasiswa(data)
-  //     })
-  //   }
-
-  // useEffect(() => {
-  //   getDataMahasiswa()
-  // },[])
-  // console.log(mahasiswa)
 
   return (
     <>
@@ -75,16 +51,8 @@ const MahasiswaAdmin = (props) => {
         }}
       >
         <Container maxWidth={false} >
-          <MahasiswaToolbar searchTerm={searchTerm} onSearchChange={handleSearch} />
-          <Box sx={{pt: 3 }} >
-            {/* <Router>
-              <Routes>
-                <Route exact path={`${pathLink}/list`} component={MahasiswaList} />
-              </Routes>
-            </Router> */}
-            <MahasiswaList />
-            {/* <Outlet /> */}
-          </Box>
+          {/* <MahasiswaToolbar searchTerm={props.searchTerm} handleSearch={props.handleSearch} /> */}
+          <Outlet />
         </Container>
       </Box>
     </>

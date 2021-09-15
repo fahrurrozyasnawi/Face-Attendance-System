@@ -6,36 +6,9 @@ import {
 } from '@material-ui/core';
 import DosenList from 'src/components/dosen/DosenList';
 import DosenToolbar from 'src/components/dosen/DosenToolbar';
+import { Outlet } from 'react-router';
 
-const DosenAdmin = () => {
-  const [dosen, setDosen] = useState([])
-  const [searchTerm, setSearchTerm] = useState("")
-
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value)
-  }
-  
-  const getDataDosen = async () => {
-    fetch('/data-dosen', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        data = !searchTerm
-          ? data
-          : data.filter(person =>
-              person.namaDosen.toLowerCase().includes(searchTerm.toLowerCase()))
-        setDosen(data)
-      })
-    }
-
-  useEffect(() => {
-    getDataDosen()
-  },[])
+const DosenAdmin = () => {  
 
   return (
     <>
@@ -50,10 +23,7 @@ const DosenAdmin = () => {
         }}
       >
         <Container maxWidth={false} >
-          <DosenToolbar searchTerm={searchTerm} onSearchChange={handleSearch} />
-          <Box sx={{ pt: 3 }}>
-            <DosenList dataDosen={dosen} />
-          </Box>
+          <Outlet />
         </Container>
       </Box>
     </>

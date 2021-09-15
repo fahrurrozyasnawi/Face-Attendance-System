@@ -61,6 +61,7 @@ const MahasiswaList = (props) => {
   // const [mahasiswaData, setMahasiswaData] = useState({})
   const [mahasiswaId, setMahasiswaId] = useState("")
   const [dataMahasiswa, setDataMahasiswa] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
   
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -116,28 +117,6 @@ const MahasiswaList = (props) => {
     setPage(newPage);
   }
 
-  const getDataMahasiswa = () => {
-    fetch('/data-mahasiswa', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        // data = !props.searchTerm
-        //   ? data
-        //   : data.filter(person =>
-        //       person.namaLengkap.toLowerCase().includes(props.searchTerm.toLowerCase()))
-        setDataMahasiswa(data)
-      })
-    }
-
-  useEffect(() => {
-    getDataMahasiswa()
-  },[])
-
   console.log("data mahasiswa list ", dataMahasiswa)
   return (
     <Card>
@@ -151,7 +130,7 @@ const MahasiswaList = (props) => {
               headCells={headCells}
             />
             <TableBody>
-              {stableSort(dataMahasiswa, getComparator(order, orderBy))
+              {stableSort(props.dataMahasiswa, getComparator(order, orderBy))
                 .slice(page * limit, page * limit + limit)
                 .map((mahasiswa, index) => {
                   return(
@@ -205,7 +184,7 @@ const MahasiswaList = (props) => {
       </PerfectScrollbar>
       <TablePagination 
         component="div"
-        count={dataMahasiswa.length}
+        count={props.dataMahasiswa.length}
         onPageChange={hanldePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}
