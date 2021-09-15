@@ -14,6 +14,8 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/face-attendance'
 mongo = PyMongo(app)
 
+CORS(app)
+
 mahasiswaCol = mongo.db.mahasiswa
 dosenCol = mongo.db.dosen
 absenCol = mongo.db.absen
@@ -190,7 +192,7 @@ def allDataDosen():
     '_id' : request.json['nip'],
     'namaDosen': request.json['namaDosen'],
     'nip': str(request.json['nip']),
-    'programStudi': request.json['programStudi']
+    'programStudi': request.json['programStudi'][0]
     })
     return jsonify({"status": "Data berhasil disimpan"})
   
@@ -321,6 +323,12 @@ def oneDataAbsen(id):
     return jsonify({'msg': 'Data telah disimpan'})
   
 # END API ABSEN
+
+@app.route('/start-attendance', methods=['POST', 'GET'])
+def startAttendance():
+  if request.method == 'POST':
+    return "Test"
+  
 
 if __name__ == "__main__":
   app.run(debug=True)
