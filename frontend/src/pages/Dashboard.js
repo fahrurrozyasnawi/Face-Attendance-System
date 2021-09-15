@@ -8,14 +8,20 @@ import {
   CardActions,
   CardContent,
   Paper,
-  Typography
+  Typography,
+  CardMedia
 } from '@material-ui/core'
 import Clock from 'src/components/dashboard/Clock';
 
 const Dashboard = () => {
   
   return(
-    <>
+    <Box
+      sx={{
+        px : 2,
+        py : 2
+      }}
+    >
       <Helmet>
         <title>Dashboard | Face Attendance</title>
       </Helmet>
@@ -26,14 +32,14 @@ const Dashboard = () => {
           py: 1
         }}
       >
-        <Container>
+        <Container maxWidth >
           <Grid>
             <Typography variant='h5' >
               Dashboard
             </Typography>
           </Grid>
         </Container>
-        <Container maxWidth={false}>
+        <Container maxWidth >
           <Grid
             container
             justifyContent='space-between'
@@ -53,20 +59,24 @@ const Dashboard = () => {
             </Grid>
           </Grid>
         </Container>
-        <Container>
+        <Container maxWidth >
           <Grid
             container
             spacing={2}
           >
             <Grid item>
-              <Card>
-                TEXT
+              <Card maxWidth={345} >
+                <CardMedia 
+                  sx={{
+                    height: 140
+                  }}
+                />
               </Card>
             </Grid>
           </Grid>
         </Container>
       </Box>
-    </>
+    </Box>
   );
 };
 export default Dashboard;
