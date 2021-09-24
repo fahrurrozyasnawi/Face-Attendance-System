@@ -53,7 +53,7 @@ const MahasiswaToolbar = (props) => {
 
   useEffect(() => {
     getDataMahasiswa()
-  },[searchTerm])
+  },[dataMahasiswa, searchTerm])
   // console.log("Dari mAdmin = ",dataMahasiswa)
   
   return (

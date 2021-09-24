@@ -75,22 +75,26 @@ const EditMahasiswa = (props) => {
     updateMahasiswa(id, data)
   }
   
-  useEffect( () => {
-    fetch('/mahasiswa/' + id, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(res => res.json())
-        .then(mahasiswaData => {
-          // setMahasiswaData(json)
-          const fields = ['namaLengkap', 'nim', 'kelas', 'angkatan', 'programStudi']
-          console.log("Fields = ", fields)
-          fields.forEach(field => setValue(field, mahasiswaData[field]))
-          setMahasiswaData(mahasiswaData)
-          console.log("SetValue data = ", mahasiswaData)
-        })
+  const getOneData = async (id) => {
+    await fetch('/mahasiswa/' + id, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(mahasiswaData => {
+        // setMahasiswaData(json)
+        const fields = ['namaLengkap', 'nim', 'kelas', 'angkatan', 'programStudi']
+        console.log("Fields = ", fields)
+        fields.forEach(field => setValue(field, mahasiswaData[field]))
+        setMahasiswaData(mahasiswaData)
+        console.log("SetValue data = ", mahasiswaData)
+      }) 
+  }
+
+  useEffect( async () => {
+    getOneData(id)
   }, [])
 
   console.log("Edit mahasiswa data from mahasiswaData = ",mahasiswaData)
@@ -106,7 +110,7 @@ const EditMahasiswa = (props) => {
           autoComplete='off'
           onSubmit={handleSubmit(onSubmit)}
           onReset={reset}
-          // onChange={getOneMahasiswaData}
+          // onChange={() => getOneData(id) }
           // noValidate
           // {...props} 
         >

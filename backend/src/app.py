@@ -1,10 +1,11 @@
 from logging import NullHandler
-from flask import Flask, json, request, jsonify
+from face_recognition.api import face_distance
+from flask import Flask, json, request, jsonify, Response
 from flask_pymongo import PyMongo, ObjectId
 from flask_cors import CORS
-from datetime import datetime
+from datetime import date, time, datetime
 #from app import courseid
-import cv2
+import cv2, queue, threading, time
 import mtcnn
 import face_recognition
 import os
@@ -24,6 +25,7 @@ absenCol = mongo.db.absen
 ds_factor=0.6
 detector = mtcnn.MTCNN()
 
+# Class 2
 class VideoCamera(object):
   #courseid=''
   def __init__(self):
@@ -40,74 +42,72 @@ class VideoCamera(object):
   myList = os.listdir(path)
   # print(myList)
   for cl in myList:
-    curImg = cv2.imread(f'{path}/{cl}')
-    images.append(curImg)
-    classNames.append(os.path.splitext(cl)[0])
+      curImg = cv2.imread(f'{path}/{cl}')
+      images.append(curImg)
+      classNames.append(os.path.splitext(cl)[0])
   print(classNames)
 
   def findEncodings(images):
-    encodeList = []
+      encodeList = []
 
-    for img in images:
-      img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-      encode = face_recognition.face_encodings(img)[0]
-      encodeList.append(encode)
-    return encodeList
+      for img in images:
+          img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+          encode = face_recognition.face_encodings(img)[0]
+          encodeList.append(encode)
+      return encodeList
 
   encodeListKnown = findEncodings(images)
+  process_this_frame = True
+  
+  # def takeAttend():
+  #     return 0
 
-  def get_frame(self):
+  def get_frame(self, id):
     success, image = self.video.read()
-    image=cv2.resize(image,None,fx=ds_factor,fy=ds_factor,interpolation=cv2.INTER_AREA)
-    gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-    face_rects=detector.detect_faces(gray)
+    if VideoCamera.process_this_frame:
+      image=cv2.resize(image,None,fx=ds_factor,fy=ds_factor,interpolation=cv2.INTER_AREA)
+      gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+      face_rects= detector.detectMultiScale(gray,1.3,5)
+      # print("From mtcnn ",face_rects)
 
-    imgS = cv2.resize(image, (0, 0), None, 0.25, 0.25)
-    imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
-    facesCurFrame = face_recognition.face_locations(imgS)
-    encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
+      imgS = cv2.resize(image, (0, 0), None, 0.25, 0.25)
+      imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
+      facesCurFrame = face_recognition.face_locations(imgS)
+      encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
-    for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
-      matches = face_recognition.compare_faces(VideoCamera.encodeListKnown, encodeFace)
-      faceDis = face_recognition.face_distance(VideoCamera.encodeListKnown, encodeFace)
-      print(faceDis)
-      matchIndex = np.argmin(faceDis)
+      for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
+        matches = face_recognition.compare_faces(VideoCamera.encodeListKnown, encodeFace)
+        faceDis = face_recognition.face_distance(VideoCamera.encodeListKnown, encodeFace)
+        print(faceDis)
+        matchIndex = np.argmin(faceDis)
 
-      if matches[matchIndex]:
-        name = VideoCamera.classNames[matchIndex].upper()
-        print(name)
-        # for result in result_list:
-        #   # get coordinates
-        #   x, y, width, height = result['box']
-        #   # create the shape
-        #   rect = Rectangle((x, y), width, height, fill=False, color='red')
-        #   # draw the box
-        #   ax.add_patch(rect)
-        
-        for (x,y,w,h) in face_rects['box']:
-          cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
-          cv2.putText(image, name, (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-          break
-        markAttendance(name)
+        if matches[matchIndex]:
+          name = VideoCamera.classNames[matchIndex].upper()
+          print(name)
+          for (x,y,w,h) in face_rects:
+            cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
+            cv2.putText(image, name, (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+            break
+          markAttendance(id, name)
     ret, jpeg = cv2.imencode('.jpg', image)
     return jpeg.tobytes()
 
-def markAttendance(name):
-  #csv.DictWriter(result.csv, )
-  global filename
-  print(filename)
-  with open('C:/xampp/htdocs/attendance/'+filename, 'r+') as f:
-    dataList = f.readlines()
-    nameList = []
+def markAttendance(id, name):
+  absenCol.update(
+    { "_id" : id, "mahasiswa._id" : name },
+    {
+      "$set": {"status": "Hadir"}
+    }
+  )
 
-    for line in dataList:
-      entry = line.split(',')
-      nameList.append(entry[0])
-      print(nameList)
-    if name not in nameList:
-      now = datetime.now()
-      dt = now.strftime('%H:%M:%S')
-      f.writelines(f'\n{name},{dt}')
+
+# def markAttendance(id, name):
+#   absenCol.update(
+#     { "_id" : id, "mahasiswa._id" : name },
+#     {
+#       "$set": {"status": "Hadir"}
+#     }
+#   )
 
 # START API MAHASISWA
 #All Data Mahasiswa
@@ -135,7 +135,7 @@ def allDataMahasiswa():
     # }],
     'kelas': request.json['kelas'],
     'angkatan': str(request.json['angkatan']),
-    'programStudi': request.json['programStudi']
+    'programStudi': request.json['programStudi'][0]
     })
     
     return jsonify({'status': "Data telah disimpan"})
@@ -175,7 +175,7 @@ def oneDataMahasiswa(id):
     'nim': request.json['nim'],
     'kelas': request.json['kelas'],
     'angkatan': str(request.json['angkatan']),
-    'programStudi': request.json['programStudi']
+    'programStudi': request.json['programStudi'][0]
     }})
   
     return jsonify({'msg': 'Data telah terupdate!!'})
@@ -241,10 +241,10 @@ def alldataAbsen():
 
   if request.method == 'POST':
     idAbsen = request.json['programStudi'][1] + request.json['kelas'][1] + request.json['namaDosen'][1]
-    kelas = request.json['kelas'][0]
-    for doc in mahasiswaCol.find({'kelas': kelas}, 
-    {'kelas': 0, 'angkatan': 0, 'programStudi': 0}):
-      mahasiswa.append(doc)
+    # kelas = request.json['kelas'][0]
+    # for doc in mahasiswaCol.find({'kelas': kelas}, 
+    # {'kelas': 0, 'angkatan': 0, 'programStudi': 0}):
+    #   mahasiswa.append(doc)
 
     # Input to db
     absenCol.insert({
@@ -255,9 +255,7 @@ def alldataAbsen():
       'programStudi': request.json['programStudi'][0],
       'mataKuliah': request.json['mataKuliah'][0],
       'tahunAjaran': request.json['tahunAjaran'],
-      'waktuAbsen': None,
-      'tglAbsen': None,
-      'mahasiswa' : mahasiswa
+      'absensi' : None
     })
     return jsonify({'status': "Data telah disimpan"})
 
@@ -266,21 +264,6 @@ def alldataAbsen():
       # doc['_id'] = doc['_id']
       dataAbsen.append(doc)
     return jsonify(dataAbsen)
-
-# @app.route('/absen/mahasiswa', methods=['GET'])
-# def getMahasiswaData():
-#   list = mahasiswaCol.aggregate([
-#     {
-#       '$group' : {
-#         '_id': {
-#         'kelas': '$kelas',
-#         'angkatan' : '$angkatan',
-#         'programStudi': '$programStudi'
-#         }
-#     }}
-#   ])
-
-#   return jsonify(list)
 
 @app.route('/absen/<id>', methods=['GET', 'PUT', 'DELETE'])
 def oneDataAbsen(id):
@@ -304,31 +287,73 @@ def oneDataAbsen(id):
   
   #update
   if request.method == 'PUT':
+
     kelas = request.json['kelas'][0]
+    print("kelas ", kelas)
     for doc in mahasiswaCol.find({'kelas': kelas}, 
     {'kelas': 0, 'angkatan': 0, 'programStudi': 0}):
       mahasiswa.append(doc)
 
     absenCol.update_one({'_id': id}, {'$set': {
       'namaDosen': request.json['namaDosen'][0],
-      'nip': request.json['nip'][1],
+      'nip': request.json['namaDosen'][1],
       'kelas': request.json['kelas'][0],
       'programStudi': request.json['programStudi'][0],
       'mataKuliah': request.json['mataKuliah'][0],
-      'tahunAjaran': request.json['tahunAjaran'],
-      'waktuAbsen': None,
-      'tglAbsen': None,
-      'mahasiswa' : mahasiswa
+      'tahunAjaran': request.json['tahunAjaran']
     }})
     return jsonify({'msg': 'Data telah disimpan'})
   
-# END API ABSEN
+# END API ABSENSI
+
+def gen(camera, id):
+  while True:
+    frame = camera.get_frame(id)
+    yield (b'--frame\r\n'
+           b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 @app.route('/start-attendance', methods=['POST', 'GET'])
 def startAttendance():
+  mahasiswa = []
+  # video_capture = VideoCapture(0)
+  # id = request.method['namaDosen'][0]
+
   if request.method == 'POST':
-    return "Test"
-  
+    # Face Recognition logic
+
+    # Absensi Logic
+    now = datetime.now()
+    tglAbsen = now.strftime("%d/%m/%Y")
+    waktuAbsen = now.strftime("%H:%M:$S")
+    idAbsen = request.json['dataAbsensi'][0]
+    idDosen = request.json['dataAbsensi'][1]
+    print("ID Absen ", idAbsen)
+    print("ID Dosen ", idDosen)
+
+    kelas = absenCol.find({'_id' : idAbsen}, {'kelas' : 1})
+    print("Kelas ", kelas)
+    for doc in mahasiswaCol.find({ 'kelas': kelas }, 
+    {'kelas': 0, 'angkatan': 0, 'programStudi': 0}):
+      mahasiswa.append(doc)
+
+    print("Mahasiswa ", mahasiswa)
+    absenCol.update({'_id' : idAbsen}, {
+      "$set": { "absensi" : { 
+        'tglAbsen' : tglAbsen,
+        'waktuAbsen': waktuAbsen,
+        'mahasiswa' : mahasiswa
+      }}
+    })
+
+    return jsonify({"msg" : "Sukses"})
+
+    # Running fr
+    # return Response(gen(VideoCamera(), idAbsen),
+    #                 mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/video')
+def video():
+  return Response(gen(VideoCamera()), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
   app.run(debug=True)

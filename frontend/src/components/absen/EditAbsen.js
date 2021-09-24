@@ -97,8 +97,8 @@ const EditAbsen = (props) => {
   }, [])
   
 
-  const updateAbsen = (id, data) => {
-    fetch(`/absen/${id}`, {
+  const updateAbsen = async (data) => {
+    await fetch(`/absen/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -107,7 +107,8 @@ const EditAbsen = (props) => {
       body: JSON.stringify(data)
     })
       .then(res => res.json())
-      .then(json => {
+      .then(data => {
+        console.log("Update ", data)
         handleClick()
         msgSuccess()
       })
@@ -117,6 +118,7 @@ const EditAbsen = (props) => {
       })
   }
   console.log("dataAbsen ", dataAbsen)
+  console.log("Dosen data ", dosenData)
   return (
     <Dialog
       // {...props}

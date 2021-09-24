@@ -85,8 +85,9 @@ const MahasiswaList = (props) => {
       .then(data => console.log(data))
   }
 
-  const getMahasiswa = (id) => {
-    setMahasiswaId(id)
+  const getMahasiswa = async (id) => {
+    let idMahasiswa = id
+    await setMahasiswaId(idMahasiswa)
     console.log("dari list id = ",mahasiswaId)
     // const res = fetch('/mahasiswa/' + id, {
     //   method: 'GET',
