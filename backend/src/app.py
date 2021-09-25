@@ -35,7 +35,7 @@ class VideoCamera(object):
   def __del__(self):
       self.video.release()
 
-  path = 'D:/TMJ 17/Tugas Akhir/Project/Face-Attendance-System/backend/src/mahasiswaImage'
+  path = 'src/mahasiswaImage'
   images = []
 
   classNames = []
@@ -324,26 +324,32 @@ def startAttendance():
     # Absensi Logic
     now = datetime.now()
     tglAbsen = now.strftime("%d/%m/%Y")
-    waktuAbsen = now.strftime("%H:%M:$S")
+    waktuAbsen = now.strftime("%H:%M:%S")
     idAbsen = request.json['dataAbsensi'][0]
     idDosen = request.json['dataAbsensi'][1]
     print("ID Absen ", idAbsen)
     print("ID Dosen ", idDosen)
 
-    kelas = absenCol.find({'_id' : idAbsen}, {'kelas' : 1})
+    kelas = request.json['dataAbsensi'][2]
     print("Kelas ", kelas)
     for doc in mahasiswaCol.find({ 'kelas': kelas }, 
     {'kelas': 0, 'angkatan': 0, 'programStudi': 0}):
       mahasiswa.append(doc)
 
-    print("Mahasiswa ", mahasiswa)
+    # print("Mahasiswa ", mahasiswa)
     absenCol.update({'_id' : idAbsen}, {
       "$set": { "absensi" : { 
         'tglAbsen' : tglAbsen,
         'waktuAbsen': waktuAbsen,
         'mahasiswa' : mahasiswa
-      }}
-    })
+      }}},
+       upsert = True,
+       multi = True
+      )
+
+    # absenCol.update({'_id' : idAbsen }, {
+    #   '$set'
+    # })
 
     return jsonify({"msg" : "Sukses"})
 

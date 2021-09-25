@@ -160,7 +160,7 @@ const Dashboard = () => {
                           required
                         >
                           {absenData.map((option, index) => (
-                            <MenuItem key={option._id} value={[option._id, option.nip]}>
+                            <MenuItem key={option._id} value={[option._id, option.nip, option.kelas]}>
                               {option.mataKuliah + " - " + option.kelas}
                             </MenuItem>
                           ))}
@@ -186,48 +186,53 @@ const Dashboard = () => {
           maxWidth
           sx={{ mt : 1 }}
         >
-          <Grid 
-            container
-            spacing={1}
-          >
-            <Grid 
-              item
-              lg={6}
-              sm={6}
-              xl={6}
-              xs={6}
-            >
-              <Typography>Kelas : 4A</Typography>
-            </Grid>
-            <Grid 
-              item
-              lg={6}
-              sm={6}
-              xl={6}
-              xs={6}
-            >
-              <Typography>Mata Kuliah</Typography>
-            </Grid>
-          </Grid>
-          <Grid 
-            container
-          >
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    NIM
-                  </TableCell>
-                  <TableCell>
-                    Nama
-                  </TableCell>
-                  <TableCell>
-                    Status
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-            </Table>
-          </Grid>
+          <Card>
+            <CardContent>
+              <Grid 
+                container
+                spacing={1}
+              >
+                <Grid 
+                  item
+                  lg={6}
+                  sm={6}
+                  xl={6}
+                  xs={6}
+                >
+                  <Typography>Kelas : 4A</Typography>
+                </Grid>
+                <Grid 
+                  item
+                  lg={6}
+                  sm={6}
+                  xl={6}
+                  xs={6}
+                >
+                  <Typography>Mata Kuliah</Typography>
+                </Grid>
+              </Grid>
+              <Divider />
+              <Grid 
+                container
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        NIM
+                      </TableCell>
+                      <TableCell>
+                        Nama
+                      </TableCell>
+                      <TableCell>
+                        Status
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                </Table>
+              </Grid>
+            </CardContent>
+          </Card>
         </Container>
       </Box>
     </Box>
