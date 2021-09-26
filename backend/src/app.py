@@ -67,12 +67,16 @@ class VideoCamera(object):
     if VideoCamera.process_this_frame:
       image=cv2.resize(image,None,fx=ds_factor,fy=ds_factor,interpolation=cv2.INTER_AREA)
       gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-      face_rects= detector.detectMultiScale(gray,1.3,5)
-      # print("From mtcnn ",face_rects)
+      rgb=cv2.cvtColor(gray,cv2.COLOR_GRAY2RGB)
+      face_rects= detector.detect_faces(rgb)
+      # face_rects = getattr(face_rects, 'box')
+      # face_rects= detector.detect_faces(gray,1.3,5)
+      print("From mtcnn ",face_rects)
 
       imgS = cv2.resize(image, (0, 0), None, 0.25, 0.25)
       imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
       facesCurFrame = face_recognition.face_locations(imgS)
+      print("FaceCurFrame ", facesCurFrame)
       encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
       for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
@@ -83,20 +87,23 @@ class VideoCamera(object):
 
         if matches[matchIndex]:
           name = VideoCamera.classNames[matchIndex].upper()
+          markAttendance(id, name)
           print(name)
-          for (x,y,w,h) in face_rects:
+          # for (x,y,w,h) in face_rects:
+          for face_rect in face_rects:
+            x,y,w,h = face_rect['box']
             cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
             cv2.putText(image, name, (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
             break
-          markAttendance(id, name)
+          # markAttendance(id, name)
     ret, jpeg = cv2.imencode('.jpg', image)
     return jpeg.tobytes()
 
 def markAttendance(id, name):
   absenCol.update(
-    { "_id" : id, "mahasiswa._id" : name },
+    { "_id" : id, "absensi.mahasiswa._id" : name },
     {
-      "$set": {"status": "Hadir"}
+      "$set": {"absensi.mahasiswa.status": "Hadir"}
     }
   )
 
@@ -133,9 +140,10 @@ def allDataMahasiswa():
     #   'nim' : request.json['nim'],
     #   'namaLengkap' : request.json['namaLengkap']
     # }],
-    'kelas': request.json['kelas'],
+    'kelas': request.json['kelas'][0],
     'angkatan': str(request.json['angkatan']),
-    'programStudi': request.json['programStudi'][0]
+    'programStudi': request.json['programStudi'][0],
+    'status': "Alpa"
     })
     
     return jsonify({'status': "Data telah disimpan"})
@@ -255,7 +263,7 @@ def alldataAbsen():
       'programStudi': request.json['programStudi'][0],
       'mataKuliah': request.json['mataKuliah'][0],
       'tahunAjaran': request.json['tahunAjaran'],
-      'absensi' : None
+      'absensi' : []
     })
     return jsonify({'status': "Data telah disimpan"})
 
@@ -312,48 +320,49 @@ def gen(camera, id):
     yield (b'--frame\r\n'
            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-@app.route('/start-attendance', methods=['POST', 'GET'])
-def startAttendance():
+@app.route('/start-attendance/<id>', methods=['PUT', 'GET'])
+def startAttendance(id):
   mahasiswa = []
+  now = datetime.now()
+  tglAbsen = now.strftime("%d/%m/%Y")
+  waktuAbsen = now.strftime("%H:%M:%S")
   # video_capture = VideoCapture(0)
   # id = request.method['namaDosen'][0]
 
-  if request.method == 'POST':
+  if request.method == 'PUT':
     # Face Recognition logic
 
     # Absensi Logic
-    now = datetime.now()
-    tglAbsen = now.strftime("%d/%m/%Y")
-    waktuAbsen = now.strftime("%H:%M:%S")
-    idAbsen = request.json['dataAbsensi'][0]
+    # idAbsen = request.json['dataAbsensi'][0]
     idDosen = request.json['dataAbsensi'][1]
-    print("ID Absen ", idAbsen)
+    print("ID Absen ", id)
     print("ID Dosen ", idDosen)
 
     kelas = request.json['dataAbsensi'][2]
+    prodi = request.json['dataAbsensi'][3]
+    print("Prodi ", prodi)
     print("Kelas ", kelas)
-    for doc in mahasiswaCol.find({ 'kelas': kelas }, 
+    for doc in mahasiswaCol.find({ 'kelas': kelas, 'programStudi' : prodi }, 
     {'kelas': 0, 'angkatan': 0, 'programStudi': 0}):
       mahasiswa.append(doc)
 
-    # print("Mahasiswa ", mahasiswa)
-    absenCol.update_one({'_id' : idAbsen}, {
-      "$push": { "absensi" : { 
+    absensi = { 
         'tglAbsen' : tglAbsen,
         'waktuAbsen': waktuAbsen,
         'mahasiswa' : mahasiswa
-      }}}
+      }
+    # print("Mahasiswa ", mahasiswa)
+    absenCol.update({'_id' : id, 'absensi.waktuAbsen' : waktuAbsen }, {
+      "$set": { "absensi" : absensi }},
+      upsert = True, multi = True
       )
 
-    # absenCol.update({'_id' : idAbsen }, {
-    #   '$set'
-    # })
-
     return jsonify({"msg" : "Sukses"})
-
+  
+  if request.method == "GET":
     # Running fr
-    # return Response(gen(VideoCamera(), idAbsen),
-    #                 mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(gen(VideoCamera(), id),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/video')
 def video():

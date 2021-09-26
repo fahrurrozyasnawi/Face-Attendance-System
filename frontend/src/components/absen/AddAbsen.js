@@ -145,7 +145,7 @@ const AddAbsen = (props) => {
                 <Select
                   {...register("namaDosen")}
                   labelId="label-angkatan"
-                  label="Angkatan"
+                  label="Dosen"
                 >
                   {dosenData.map((option) => (
                     <MenuItem key={option.value} value={option.value}>

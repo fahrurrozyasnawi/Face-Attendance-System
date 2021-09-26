@@ -24,11 +24,15 @@ import Clock from 'src/components/dashboard/Clock';
 import { Table } from '@material-ui/core';
 
 const Dashboard = () => {
+  let id_absensi = null
+  let stream = false
   const { register, handleSubmit } = useForm();
   const [absenData, setAbsenData] = useState([])
+  const [absenId, setAbsenId] = useState("")
+  const [dataCapture, setDataCapture] = useState(null)
 
-  const getAbsenData = () => {
-    fetch('/data-absen', {
+  const getAbsenData = async () => {
+    await fetch('/data-absen', {
       method: 'GET'
     })
       .then(res => res.json())
@@ -40,9 +44,12 @@ const Dashboard = () => {
       })
   }
 
-  const startAttendance = (data) => {
-    fetch('/start-attendance', {
-      method: 'POST',
+  // const getIdAbsen = async (e) => {}
+  
+
+  const startAttendance = async (id, data) => {
+    await fetch('/start-attendance/' + id , {
+      method: 'PUT',
       headers: {
         'Content-Type' : 'application/json',
         'Accept' : 'application/json'
@@ -53,16 +60,37 @@ const Dashboard = () => {
       .then(data => console.log())
   }
 
+  const startCamera = async (id) => {
+    await fetch(`/start-attendance/${id}`, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then( data => setDataCapture(data))
+  }
+  
+
   const onSubmit = async (data) => {
-    startAttendance(data)
+    id_absensi = data['dataAbsensi'][0]
+    console.log("Id onSubmit ", id_absensi)
+    startAttendance(id_absensi ,data)
+    // stream = true
+    // startCamera(id_absensi)
     console.log("onSubmit ",data)
   }
   
+
   useEffect(() => {
-    getAbsenData()
-  }, [])
+    if (stream !== false){
+      startCamera(id_absensi)
+    }
+
+    if (absenData !== []) {
+      getAbsenData()
+    }
+  }, [dataCapture])
 
   console.log("Absen data ", absenData)
+  console.log("Data Capture ", dataCapture)
   // console.log(onSubmit())
   return (
     <Box
@@ -129,6 +157,7 @@ const Dashboard = () => {
                   sx={{
                     height: 300
                   }}
+                  image={dataCapture}
                 />
               </Card>
             </Grid>
@@ -152,16 +181,17 @@ const Dashboard = () => {
                       sx={{py : 1}}
                     >
                       <FormControl variant="outlined" fullWidth >
-                        <InputLabel id="label-angkatan">Pilih Absensi</InputLabel>
+                        <InputLabel id="label-absensi">Pilih Absensi</InputLabel>
                         <Select
                           {...register("dataAbsensi")}
-                          labelId="label-angkatan"
-                          label="Angkatan"
+                          labelId="label-absensi"
+                          label="Pilih Absensi"
                           required
+                          // onChange={getIdAbsen}
                         >
                           {absenData.map((option, index) => (
-                            <MenuItem key={option._id} value={[option._id, option.nip, option.kelas]}>
-                              {option.mataKuliah + " - " + option.kelas}
+                            <MenuItem key={option._id} value={[option._id, option.nip, option.kelas, option.programStudi]}>
+                              {option.namaDosen + " | " +  option.mataKuliah + " - " + option.kelas}
                             </MenuItem>
                           ))}
                         </Select>

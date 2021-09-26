@@ -15,6 +15,7 @@ import {
   FormControl
 } from '@material-ui/core';
 import angkatan from './List/Angkatan';
+import kelas from 'src/__mocks__/Kelas'
 import prodi from './List/Prodi'
 import { Select } from '@material-ui/core';
 
@@ -115,13 +116,20 @@ const AddMahasiswa = (props) => {
               md={4}
               xs={12}
             >
-              <TextField 
-                {...register("kelas")}
-                fullWidth
-                label='Kelas'
-                required
-                variant='outlined'
-              />
+              <FormControl variant="outlined" fullWidth >
+                <InputLabel id="label-angkatan">Kelas</InputLabel>
+                <Select
+                  {...register("kelas")}
+                  labelId="label-angkatan"
+                  label="Kelas"
+                >
+                  {kelas.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid
               item
