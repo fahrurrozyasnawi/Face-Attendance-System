@@ -337,14 +337,12 @@ def startAttendance():
       mahasiswa.append(doc)
 
     # print("Mahasiswa ", mahasiswa)
-    absenCol.update({'_id' : idAbsen}, {
-      "$set": { "absensi" : { 
+    absenCol.update_one({'_id' : idAbsen}, {
+      "$push": { "absensi" : { 
         'tglAbsen' : tglAbsen,
         'waktuAbsen': waktuAbsen,
         'mahasiswa' : mahasiswa
-      }}},
-       upsert = True,
-       multi = True
+      }}}
       )
 
     # absenCol.update({'_id' : idAbsen }, {
