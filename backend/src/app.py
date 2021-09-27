@@ -62,20 +62,23 @@ class VideoCamera(object):
   # def takeAttend():
   #     return 0
 
-  def get_frame(self, id):
+  def get_frame(self, id, tglAbsen):
     success, image = self.video.read()
     if VideoCamera.process_this_frame:
       image=cv2.resize(image,None,fx=ds_factor,fy=ds_factor,interpolation=cv2.INTER_AREA)
       gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
       rgb=cv2.cvtColor(gray,cv2.COLOR_GRAY2RGB)
       face_rects= detector.detect_faces(rgb)
+      # face_box = face_rects[0]['box']
       # face_rects = getattr(face_rects, 'box')
       # face_rects= detector.detect_faces(gray,1.3,5)
-      print("From mtcnn ",face_rects)
+      # print("From mtcnn ",face_box)
 
       imgS = cv2.resize(image, (0, 0), None, 0.25, 0.25)
       imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
       facesCurFrame = face_recognition.face_locations(imgS)
+      # facesCurFrame = detector.detect_faces(imgS)
+      # facesCurFrame = facesCurFrame[0]['box']
       print("FaceCurFrame ", facesCurFrame)
       encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
@@ -87,7 +90,7 @@ class VideoCamera(object):
 
         if matches[matchIndex]:
           name = VideoCamera.classNames[matchIndex].upper()
-          markAttendance(id, name)
+          markAttendance(id, name, tglAbsen)
           print(name)
           # for (x,y,w,h) in face_rects:
           for face_rect in face_rects:
@@ -99,11 +102,11 @@ class VideoCamera(object):
     ret, jpeg = cv2.imencode('.jpg', image)
     return jpeg.tobytes()
 
-def markAttendance(id, name):
+def markAttendance(id, name, tglAbsen):
   absenCol.update(
-    { "_id" : id, "absensi.mahasiswa._id" : name },
+    { "_id" : id, "absensi.mahasiswa.nim" : name, "absensi.tglAbsen" : tglAbsen },
     {
-      "$set": {"absensi.mahasiswa.status": "Hadir"}
+      "$set": {"absensi.mahasiswa.$.status": "Hadir"}
     }
   )
 
@@ -314,15 +317,16 @@ def oneDataAbsen(id):
   
 # END API ABSENSI
 
-def gen(camera, id):
+def gen(camera, id, tglAbsen):
   while True:
-    frame = camera.get_frame(id)
+    frame = camera.get_frame(id, tglAbsen)
     yield (b'--frame\r\n'
            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 @app.route('/start-attendance/<id>', methods=['PUT', 'GET'])
 def startAttendance(id):
   mahasiswa = []
+  data = []
   now = datetime.now()
   tglAbsen = now.strftime("%d/%m/%Y")
   waktuAbsen = now.strftime("%H:%M:%S")
@@ -342,6 +346,15 @@ def startAttendance(id):
     prodi = request.json['dataAbsensi'][3]
     print("Prodi ", prodi)
     print("Kelas ", kelas)
+
+    # for doc in mahasiswaCol.aggregate([
+    #   {"$match" : { "kelas" : kelas, "programStudi" : prodi }},
+    #   {"$group" : { "_id" : "$kelas" [{"$push" : "$$ROOT"}] }}
+    # ]):
+    #   mahasiswa.append(doc)
+
+    # print("Data ", data)
+
     for doc in mahasiswaCol.find({ 'kelas': kelas, 'programStudi' : prodi }, 
     {'kelas': 0, 'angkatan': 0, 'programStudi': 0}):
       mahasiswa.append(doc)
@@ -352,16 +365,17 @@ def startAttendance(id):
         'mahasiswa' : mahasiswa
       }
     # print("Mahasiswa ", mahasiswa)
-    absenCol.update({'_id' : id, 'absensi.waktuAbsen' : waktuAbsen }, {
-      "$set": { "absensi" : absensi }},
-      upsert = True, multi = True
+    absenCol.update({'_id' : id }, {
+      "$push": { "absensi" : absensi }},
+      # {"$push" : { "absensi" : absensi }},
+      upsert = True
       )
 
     return jsonify({"msg" : "Sukses"})
   
   if request.method == "GET":
     # Running fr
-    return Response(gen(VideoCamera(), id),
+    return Response(gen(VideoCamera(), id, tglAbsen),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/video')

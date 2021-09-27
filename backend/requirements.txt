@@ -1,10 +1,12 @@
 # install package files for backend python
-Flask=PyMongo
+Flask
+Flask-PyMongo
 numpy
 flask-cors
-matplotlib
-pandas
+# matplotlib
+# pandas
 tensorflow
 opencv-python
-mxnet
+mtcnn
+# mxnet
 face_recognition

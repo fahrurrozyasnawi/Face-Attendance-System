@@ -74,7 +74,7 @@ const Dashboard = () => {
     console.log("Id onSubmit ", id_absensi)
     startAttendance(id_absensi ,data)
     // stream = true
-    // startCamera(id_absensi)
+    startCamera(id_absensi)
     console.log("onSubmit ",data)
   }
   
