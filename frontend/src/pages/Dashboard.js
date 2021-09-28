@@ -66,6 +66,7 @@ const Dashboard = () => {
     })
       .then(res => res.json())
       .then( data => setDataCapture(data))
+      .catch( err => console.log("Absen sudah ada!!"))
   }
   
 
