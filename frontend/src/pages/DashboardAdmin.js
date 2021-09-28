@@ -24,12 +24,13 @@ import Clock from 'src/components/dashboard/Clock';
 import { Table } from '@material-ui/core';
 
 const DashboardAdmin = () => {
-  let id_absensi = null
   let stream = false
   const { register, handleSubmit } = useForm();
   const [absenData, setAbsenData] = useState([])
   const [absenId, setAbsenId] = useState("")
   const [dataCapture, setDataCapture] = useState(null)
+  const [isStop, setIsStop] = useState(true)
+  const [idAbsensi, setIdAbsensi] = useState(null)
 
   const getAbsenData = async () => {
     await fetch('/data-absen', {
@@ -37,14 +38,20 @@ const DashboardAdmin = () => {
     })
       .then(res => res.json())
       .then(data => {
-        // const dataAbsen = data.map((absen, i) => ({
-        //   label: absen._id
-        // }))
         setAbsenData(data)
       })
   }
-
-  // const getIdAbsen = async (e) => {}
+  
+  const handlingAttendance = () => {
+    setIsStop(false)
+  }
+  
+  const handlingStopAttendance = () => {
+    setIsStop(true)
+    const a = fetch('/stop')
+    console.log("Stop ", a)
+    // {'/stop'}
+  }
   
 
   const startAttendance = async (id, data) => {
@@ -61,26 +68,29 @@ const DashboardAdmin = () => {
         res.json()
         console.log("a1 ", res['status'])
         if ( res['status'] == 200 ) {
-          startCamera(id)
+          handlingAttendance()
         }
       })
       .then(json => console.log("data ",json))
       .catch(err => console.log("Telah dilakukan absensi hari ini!"))
   }
 
-  const startCamera = (id) => {
-     fetch(`/start-attendance/${id}`, {
+  const startCamera = async (id) => {
+    await fetch(`/start-attendance/${id}`, {
       method: 'GET'
     })
       .then(res => res.json())
-      .then( data => setDataCapture(data))
+      // .then( data => {
+      //   setDataCapture(data)
+      //   // setIsStop(true)
+      // })
       // .catch( err => console.log("Absen sudah ada!!"))
   }
   
-
   const onSubmit = async (data) => {
-    id_absensi = data['dataAbsensi'][0]
+    let id_absensi = data['dataAbsensi'][0]
     console.log("Id onSubmit ", id_absensi)
+    await setIdAbsensi(id_absensi)
     startAttendance(id_absensi ,data)
     // stream = true
     // startCamera(id_absensi)
@@ -89,13 +99,8 @@ const DashboardAdmin = () => {
   
 
   useEffect(() => {
-    // if (stream !== false){
-    //   startCamera(id_absensi)
-    // }
-
-    if (absenData !== []) {
-      getAbsenData()
-    }
+    getAbsenData()
+    
   }, [])
 
   console.log("Absen data ", absenData)
@@ -164,10 +169,13 @@ const DashboardAdmin = () => {
               <Card maxWidth={600} >
                 <Box 
                   component="img"
-                  sx={{
-                    height: 300
-                  }}
-                  src={dataCapture}
+                  // sx={{
+                  //   height: 300,
+                  //   width: auto
+                  // }}
+                  height={300}
+                  width={'auto'}
+                  src={isStop ? null : startCamera(idAbsensi)}
                 />
               </Card>
             </Grid>
@@ -190,7 +198,7 @@ const DashboardAdmin = () => {
                     <Grid item
                       sx={{py : 1}}
                     >
-                      <FormControl variant="outlined" fullWidth >
+                      <FormControl variant="outlined" fullWidth disabled={isStop ? false : true} >
                         <InputLabel id="label-absensi">Pilih Absensi</InputLabel>
                         <Select
                           {...register("dataAbsensi")}
@@ -212,20 +220,24 @@ const DashboardAdmin = () => {
                      fullWidth
                      sx={{ justifyContent : 'flex-end'}}
                     >
-                      <Button
+                      {isStop ?
+                        <Button
                         type='submit'
                         color='primary'
                         variant='contained'
                         sx={{ mx: 1}}
-                      >
-                        Mulai
-                      </Button>
-                      <Button
+                        >
+                          Mulai
+                        </Button>
+                        :
+                        <Button
                         color='secondary'
                         variant='contained'
-                      >
-                        Stop
-                      </Button>
+                        onClick={handlingStopAttendance}
+                        >
+                          Stop
+                        </Button>
+                      }
                     </Box>
                   </Grid>
                 </CardContent>

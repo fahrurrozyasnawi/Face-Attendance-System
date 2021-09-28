@@ -94,6 +94,8 @@ class VideoCamera(object):
         if matches[matchIndex]:
           name = VideoCamera.classNames[matchIndex].upper()
           markAttendance(id, name, tglAbsen)
+          print("Id absen dari process fr ", id)
+          print("Nilai tglAbsen ", tglAbsen)
           print("Terdeteksi ",name)
           # for (x,y,w,h) in face_rects:
           for face_rect in face_rects:
@@ -307,9 +309,10 @@ def startAttendance(id):
   data = []
   now = datetime.now()
   tglAbsen = now.strftime("%d/%m/%Y")
-  idAbsen = now.strftime("%d"+"%m"+"%Y")
+  idTglAbsen = now.strftime("%d"+"%m"+"%Y")
+  # Get idAbsen from id + date
+  idAbsen = idTglAbsen + id
   waktuAbsen = now.strftime("%H:%M:%S")
-
 
   if request.method == 'POST':
     # Absensi Logic
@@ -328,7 +331,7 @@ def startAttendance(id):
       mahasiswa.append(doc)
 
     hasilAbsenCol.insert({
-      '_id' : idAbsen + id,
+      '_id' : idAbsen,
       'kode_absensi' : id,
       'tglAbsensi' : tglAbsen,
       'waktuAbsensi': waktuAbsen,
@@ -341,6 +344,10 @@ def startAttendance(id):
     # Running fr
     return Response(gen(VideoCamera(), id, idAbsen),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/stop')
+def stop():
+  return cv2.destroyAllWindows()
 
 @app.route('/video')
 def video():
