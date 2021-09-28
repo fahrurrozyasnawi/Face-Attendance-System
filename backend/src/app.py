@@ -91,7 +91,7 @@ class VideoCamera(object):
         if matches[matchIndex]:
           name = VideoCamera.classNames[matchIndex].upper()
           markAttendance(id, name, tglAbsen)
-          print(name)
+          print("Terdeteksi ",name)
           # for (x,y,w,h) in face_rects:
           for face_rect in face_rects:
             x,y,w,h = face_rect['box']
@@ -104,10 +104,12 @@ class VideoCamera(object):
 
 def markAttendance(id, name, tglAbsen):
   absenCol.update(
-    { "_id" : id, "absensi.mahasiswa.nim" : name, "absensi.tglAbsen" : tglAbsen },
+    { "_id" : id},
     {
-      "$set": {"absensi.mahasiswa.$.status": "Hadir"}
-    }
+      "$set": {"absensi.$[t].mahasiswa.$[n].status": "Hadir"}
+    },
+    { "arrayFilters" : [ {"t.tglAbsen" : tglAbsen }, {"n.nim" : name}]},
+    upsert = True
   )
 
 
