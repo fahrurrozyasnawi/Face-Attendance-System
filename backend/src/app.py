@@ -387,11 +387,12 @@ def startAttendance(id):
 def hasil(id):
   dataHasilAbsensi = []
   for doc in hasilAbsenCol.find({ 'kode_absensi' : id },
-  # {
-  #   '_id' : 0, 'kode_absensi' : 0, 'tglAbsensi' : 0, 'waktuAbsensi' : 0
-  # }
+  {
+    '_id' : 0, 'kode_absensi' : 0, 'tglAbsensi' : 0, 'waktuAbsensi' : 0
+  }
   ):
     dataHasilAbsensi.append(doc)
+  # print("Hasil realtime ", dataHasilAbsensi)
   return jsonify(dataHasilAbsensi)
 
 @app.route('/hasil-data-absensi/<id>')

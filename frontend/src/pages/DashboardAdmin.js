@@ -99,10 +99,9 @@ const DashboardAdmin = () => {
     })
       .then(res => res.json())
       .then( data => {
-        // const dataHasil = data.map((hasil, i) ({
-        //   value : hasil.mahasiswa
+        // const dataHasil = data.map((hasil, i) => ({
         // }))
-        setDataAbsensiRealtime(data)
+        setDataAbsensiRealtime([...data])
       })
   }
   
@@ -136,14 +135,14 @@ const DashboardAdmin = () => {
     }
     // inCallback()
     // inCallback()
-  //  if (!isStop) {
-  //   getDataAbsenRealtime()
-  //   getHasilRealtime()
-  //   // return 0
-  //  }
+   if (!isStop) {
+    getDataAbsenRealtime()
+    getHasilRealtime()
+    // return 0
+   }
   //  inCallback()
     
-  }, [])
+  }, [isStop, dataAbsensiRealtime])
 
   // console.log("Absen data ", absenData)
   // console.log("Data Capture ", dataCapture)
@@ -211,21 +210,25 @@ const DashboardAdmin = () => {
               xs={12}
             >
               <Card>
-              { isStop ?
+              { isStop ? (
                 <Box 
                   component="img"
-                  height={300}
-                  width={'auto'}
+                  sx={{
+                    height : 300,
+                    width : 'auto'
+                  }}
                   src={null}
                 />
-                :
+                ) : (
                 <Box 
                   component="img"
-                  height={300}
-                  width={'auto'}
+                  sx={{
+                    height : 300,
+                    width : 'auto'
+                  }}
                   src={'/start-attendance/' + idAbsensi}
                 />
-              }
+              )}
                 
               </Card>
             </Grid>
@@ -246,7 +249,9 @@ const DashboardAdmin = () => {
                     fullWidth
                   >
                     <Grid item
-                      sx={{py : 1}}
+                      sx={{
+                         py : 1,
+                        }}
                     >
                       <FormControl variant="outlined" fullWidth disabled={isStop ? false : true} >
                         <InputLabel id="label-absensi">Pilih Absensi</InputLabel>
@@ -268,26 +273,27 @@ const DashboardAdmin = () => {
                     <Divider />
                     <Box
                      fullWidth
-                     sx={{ justifyContent : 'flex-end'}}
+                    //  sx={{ flexDirection : 'row-reverse', mt: 1 }}
                     >
-                      {isStop ?
+                      {isStop ? (
                         <Button
                         type='submit'
                         color='primary'
                         variant='contained'
-                        sx={{ mx: 1}}
+                        sx={{ m: 1}}
                         >
                           Mulai
                         </Button>
-                        :
+                       ) : (
                         <Button
                         color='secondary'
                         variant='contained'
+                        sx={{ m: 1}}
                         onClick={handlingStopAttendance}
                         >
                           Stop
                         </Button>
-                      }
+                      )}
                     </Box>
                   </Grid>
                 </CardContent>
@@ -302,61 +308,70 @@ const DashboardAdmin = () => {
         >
           <Card>
             <CardContent>
+            {dataAbsensi.map((data) => {
+              return (
               <Grid 
                 container
                 spacing={1}
               >
-                <Grid 
-                  item
-                  lg={6}
-                  sm={6}
-                  xl={6}
-                  xs={6}
-                >
-                  <Typography> Kelas : {dataAbsensi.kelas} </Typography>
-                </Grid>
-                <Grid 
-                  item
-                  lg={6}
-                  sm={6}
-                  xl={6}
-                  xs={6}
-                >
-                  <Typography> Mata Kuliah : {dataAbsensi.mataKuliah} </Typography>
-                </Grid>
+                    <Grid 
+                    item
+                    lg={6}
+                    sm={6}
+                    xl={6}
+                    xs={6}
+                  >
+                    <Typography variant='subtitle1' > Kelas : {data.kelas} </Typography>
+                  </Grid>
+                  <Grid 
+                    item
+                    lg={6}
+                    sm={6}
+                    xl={6}
+                    xs={6}
+                  >
+                    <Typography variant='subtitle1' > Mata Kuliah : {data.mataKuliah} </Typography>
+                  </Grid>
+               
               </Grid>
+              )})}
               <Divider />
               <Grid 
                 container
+                sx={{ justifyContent : 'center' }}
               >
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>
-                        NIM
-                      </TableCell>
-                      <TableCell>
-                        Nama
-                      </TableCell>
-                      <TableCell>
-                        Status
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {dataAbsensiRealtime.map((data,i) => {
-                      return (
-                        <TableRow
-                          hover
-                          key={data.mahasiswa[i]._id}
-                        >
-                          <TableCell>{data.mahasiswa[i].nim}</TableCell>
-                          <TableCell>{data.mahasiswa[i].namaLengkap}</TableCell>
-                          <TableCell>{data.mahasiswa[i].status}</TableCell>
-                        </TableRow>)
-                    })}
-                  </TableBody>
-                </Table>
+                {isStop ? (
+                  <Typography sx={{ textAlign : 'center' }} >Run Attendance to get Realtime Table</Typography>
+                ) : (
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>
+                          NIM
+                        </TableCell>
+                        <TableCell>
+                          Nama
+                        </TableCell>
+                        <TableCell>
+                          Status
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {dataAbsensiRealtime.map((mahasiswa, i) => {
+                        return (
+                          <TableRow
+                            hover
+                            key={mahasiswa._id}
+                          >
+                            <TableCell>{console.log(mahasiswa.nim)}</TableCell>
+                            <TableCell>{mahasiswa.namaLengkap}</TableCell>
+                            <TableCell>{mahasiswa.status}</TableCell>
+                          </TableRow>)
+                      })}
+                    </TableBody>
+                  </Table>
+                )}
               </Grid>
             </CardContent>
           </Card>

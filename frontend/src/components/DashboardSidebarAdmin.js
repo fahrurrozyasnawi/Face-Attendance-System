@@ -13,7 +13,7 @@ import {
   Grid as DashboardIcon,
   Users as DataIcon,
   FileText as DataAbsensiIcon,
-  Image as DataWajahIcon
+  Database as HasilAbsensiIcon
 } from 'react-feather';
 
 const items = [
@@ -38,9 +38,9 @@ const items = [
     title: 'Absensi'
   },
   {
-    href: '/admin/face',
-    icon: DataWajahIcon,
-    title: 'Data Wajah'
+    href: '/admin/hasil',
+    icon: HasilAbsensiIcon,
+    title: 'Hasil Absensi'
   }
 ];
 
