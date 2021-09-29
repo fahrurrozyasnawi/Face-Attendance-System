@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet'
 import {useForm} from 'react-hook-form';
 import {
@@ -18,10 +18,12 @@ import {
   Divider,
   TableHead,
   TableRow,
-  TableCell
+  TableCell,
+  TableBody
 } from '@material-ui/core'
 import Clock from 'src/components/dashboard/Clock';
 import { Table } from '@material-ui/core';
+import { inc } from 'nprogress';
 
 const DashboardAdmin = () => {
   let stream = false
@@ -31,6 +33,8 @@ const DashboardAdmin = () => {
   const [dataCapture, setDataCapture] = useState(null)
   const [isStop, setIsStop] = useState(true)
   const [idAbsensi, setIdAbsensi] = useState(null)
+  const [dataAbsensiRealtime, setDataAbsensiRealtime] = useState([])
+  const [dataAbsensi, setDataAbsensi] = useState([])  
 
   const getAbsenData = async () => {
     await fetch('/data-absen', {
@@ -55,7 +59,7 @@ const DashboardAdmin = () => {
   
 
   const startAttendance = async (id, data) => {
-    await fetch('/start-attendance/' + id , {
+    await fetch('/start-attendance/' + id, {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json',
@@ -69,42 +73,82 @@ const DashboardAdmin = () => {
         console.log("a1 ", res['status'])
         if ( res['status'] == 200 ) {
           handlingAttendance()
+          // getHasilRealtime()
+          // getDataAbsenRealtime()
         }
       })
       .then(json => console.log("data ",json))
       .catch(err => console.log("Telah dilakukan absensi hari ini!"))
   }
 
-  const startCamera = async (id) => {
-    await fetch(`/start-attendance/${id}`, {
+  const startCamera = async () => {
+    await fetch('/start-attendance/' + idAbsensi, {
       method: 'GET'
     })
       .then(res => res.json())
-      // .then( data => {
-      //   setDataCapture(data)
-      //   // setIsStop(true)
-      // })
-      // .catch( err => console.log("Absen sudah ada!!"))
+      .then( data => {
+        setDataCapture(data)
+        // setIsStop(true)
+      })
+      .catch( err => console.log("Absen sudah ada!!"))
+  }
+
+  const getHasilRealtime = async () => {
+    await fetch('/hasil-absensi-realtime/' + idAbsensi, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then( data => {
+        // const dataHasil = data.map((hasil, i) ({
+        //   value : hasil.mahasiswa
+        // }))
+        setDataAbsensiRealtime(data)
+      })
   }
   
-  const onSubmit = async (data) => {
+  const getDataAbsenRealtime = async () => {
+    await fetch('/hasil-data-absensi/' + idAbsensi, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then(data => setDataAbsensi(data))
+  }
+  
+  const onSubmit = (data) => {
     let id_absensi = data['dataAbsensi'][0]
     console.log("Id onSubmit ", id_absensi)
-    await setIdAbsensi(id_absensi)
-    startAttendance(id_absensi ,data)
+    setIdAbsensi(id_absensi)
+    startAttendance(id_absensi,data)
     // stream = true
     // startCamera(id_absensi)
+    // getDataAbsenRealtime()
     console.log("onSubmit ",data)
   }
   
+  // const inCallback = useCallback( () => {
+  //   getDataAbsenRealtime()
+  //   getHasilRealtime()
+  // })
 
-  useEffect(() => {
-    getAbsenData()
+  useEffect( () => {
+    if (isStop) {
+      getAbsenData()   
+    }
+    // inCallback()
+    // inCallback()
+  //  if (!isStop) {
+  //   getDataAbsenRealtime()
+  //   getHasilRealtime()
+  //   // return 0
+  //  }
+  //  inCallback()
     
   }, [])
 
-  console.log("Absen data ", absenData)
-  console.log("Data Capture ", dataCapture)
+  // console.log("Absen data ", absenData)
+  // console.log("Data Capture ", dataCapture)
+  console.log("Data Absensi Realtime ", dataAbsensiRealtime)
+  console.log("Data Absen Hasil ", dataAbsensi)
   // console.log(onSubmit())
   return (
     <Box
@@ -166,17 +210,23 @@ const DashboardAdmin = () => {
               xl={8}
               xs={12}
             >
-              <Card maxWidth={600} >
+              <Card>
+              { isStop ?
                 <Box 
                   component="img"
-                  // sx={{
-                  //   height: 300,
-                  //   width: auto
-                  // }}
                   height={300}
                   width={'auto'}
-                  src={isStop ? null : startCamera(idAbsensi)}
+                  src={null}
                 />
+                :
+                <Box 
+                  component="img"
+                  height={300}
+                  width={'auto'}
+                  src={'/start-attendance/' + idAbsensi}
+                />
+              }
+                
               </Card>
             </Grid>
             <Grid 
@@ -263,7 +313,7 @@ const DashboardAdmin = () => {
                   xl={6}
                   xs={6}
                 >
-                  <Typography>Kelas : 4A</Typography>
+                  <Typography> Kelas : {dataAbsensi.kelas} </Typography>
                 </Grid>
                 <Grid 
                   item
@@ -272,7 +322,7 @@ const DashboardAdmin = () => {
                   xl={6}
                   xs={6}
                 >
-                  <Typography>Mata Kuliah</Typography>
+                  <Typography> Mata Kuliah : {dataAbsensi.mataKuliah} </Typography>
                 </Grid>
               </Grid>
               <Divider />
@@ -293,6 +343,19 @@ const DashboardAdmin = () => {
                       </TableCell>
                     </TableRow>
                   </TableHead>
+                  <TableBody>
+                    {dataAbsensiRealtime.map((data,i) => {
+                      return (
+                        <TableRow
+                          hover
+                          key={data.mahasiswa[i]._id}
+                        >
+                          <TableCell>{data.mahasiswa[i].nim}</TableCell>
+                          <TableCell>{data.mahasiswa[i].namaLengkap}</TableCell>
+                          <TableCell>{data.mahasiswa[i].status}</TableCell>
+                        </TableRow>)
+                    })}
+                  </TableBody>
                 </Table>
               </Grid>
             </CardContent>

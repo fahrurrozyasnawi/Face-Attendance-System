@@ -1,4 +1,5 @@
 from logging import NullHandler
+from ntpath import join
 from face_recognition.api import face_distance
 from flask import Flask, json, request, jsonify, Response
 from flask_pymongo import PyMongo, ObjectId
@@ -20,21 +21,21 @@ CORS(app)
 mahasiswaCol = mongo.db.mahasiswa
 dosenCol = mongo.db.dosen
 absenCol = mongo.db.data_absen
-hasilAbsenCol = mongo.db.hasi_absensi
+hasilAbsenCol = mongo.db.hasil_absensi
 
 # START FACE RECOGNITION
 ds_factor=0.6
+face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 detector = mtcnn.MTCNN()
 
 # Class 2
 class VideoCamera(object):
   #courseid=''
   def __init__(self):
-
-      self.video = cv2.VideoCapture(0)
+    self.video = cv2.VideoCapture(0)
 
   def __del__(self):
-      self.video.release()
+    self.video.release()
 
   path = 'src/mahasiswaImage'
   images = []
@@ -43,18 +44,25 @@ class VideoCamera(object):
   myList = os.listdir(path)
   # print(myList)
   for cl in myList:
-      curImg = cv2.imread(f'{path}/{cl}')
-      images.append(curImg)
-      classNames.append(os.path.splitext(cl)[0])
+    curImg = cv2.imread(f'{path}/{cl}')
+    images.append(curImg)
+    classNames.append(os.path.splitext(cl)[0])
   print(classNames)
+
+  # def findFaces(self, faces):
+  #   frame = []
+  #   for box in faces:
+  #     h,i,j,k = box['box']
+  #     parent = (h,i,j,k)
+  #     frame.append(parent)
+  #   return frame
 
   def findEncodings(images):
       encodeList = []
-
       for img in images:
-          img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-          encode = face_recognition.face_encodings(img)[0]
-          encodeList.append(encode)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        encode = face_recognition.face_encodings(img, model='large')[0]
+        encodeList.append(encode)
       return encodeList
 
   encodeListKnown = findEncodings(images)
@@ -65,23 +73,31 @@ class VideoCamera(object):
 
   def get_frame(self, id, tglAbsen):
     success, image = self.video.read()
+    mtcnnCurFrame = []
     if VideoCamera.process_this_frame:
       image=cv2.resize(image,None,fx=ds_factor,fy=ds_factor,interpolation=cv2.INTER_AREA)
-      gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-      rgb=cv2.cvtColor(gray,cv2.COLOR_GRAY2RGB)
-      face_rects= detector.detect_faces(rgb)
+      # gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
       # face_box = face_rects[0]['box']
-      # face_rects = getattr(face_rects, 'box')
+      # face_rects = face_cascade.detectMultiScale(gray,1.3,5)
       # face_rects= detector.detect_faces(gray,1.3,5)
       # print("From mtcnn ",face_box)
-      print("From mtcnn ",face_rects)
+      
 
       imgS = cv2.resize(image, (0, 0), None, 0.25, 0.25)
       # imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
-      imgS = imgS[:, :, ::-1]
-      facesCurFrame = face_recognition.face_locations(imgS)
-      # facesCurFrame = detector.detect_faces(imgS)
-      # facesCurFrame = facesCurFrame[0]['box']
+      rgb=cv2.cvtColor(imgS,cv2.COLOR_BGR2RGB)
+      face_rects= detector.detect_faces(rgb)
+      # for box in face_rects:
+      #   h,i,j,k = box['box']
+      #   parent = (h,i,j,k)
+      #   mtcnnCurFrame.append(parent)
+      
+      # print("From mtcnn ",face_rects)
+      # encodesCurFrame = face_recognition.face_encodings(imgS, mtcnnCurFrame, model='large')
+
+      # print("MTCNN box based on fr ", mtcnnCurFrame)
+      # imgS = imgS[:, :, ::-1]
+      facesCurFrame = face_recognition.face_locations(imgS, model='cnn')
       print("FaceCurFrame ", facesCurFrame)
       encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
@@ -91,13 +107,19 @@ class VideoCamera(object):
         print(faceDis)
         matchIndex = np.argmin(faceDis)
 
+        face_names = []
         if matches[matchIndex]:
           name = VideoCamera.classNames[matchIndex].upper()
           markAttendance(id, name, tglAbsen)
           print("Id absen dari process fr ", id)
           print("Nilai tglAbsen ", tglAbsen)
           print("Terdeteksi ",name)
+
           # for (x,y,w,h) in face_rects:
+          #   cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
+          #   cv2.putText(image, name, (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+          #   break
+
           for face_rect in face_rects:
             x,y,w,h = face_rect['box']
             cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
@@ -105,6 +127,22 @@ class VideoCamera(object):
             break
           # markAttendance(id, name)
     VideoCamera.process_this_frame = not VideoCamera.process_this_frame
+    
+    # for (top, right, bottom, left), name in zip(facesCurFrame, face_names):
+    #   # Scale back up face locations since the frame we detected in was scaled to 1/4 size
+    #     top *= 4
+    #     right *= 4
+    #     bottom *= 4
+    #     left *= 4
+
+    #     # Draw a box around the face
+    #     cv2.rectangle(image, (left, top), (right, bottom), (0, 0, 255), 2)
+
+    #     # Draw a label with a name below the face
+    #     cv2.rectangle(image, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+    #     font = cv2.FONT_HERSHEY_DUPLEX
+    #     cv2.putText(image, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
     ret, jpeg = cv2.imencode('.jpg', image)
     return jpeg.tobytes()
 
@@ -344,6 +382,24 @@ def startAttendance(id):
     # Running fr
     return Response(gen(VideoCamera(), id, idAbsen),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/hasil-absensi-realtime/<id>')
+def hasil(id):
+  dataHasilAbsensi = []
+  for doc in hasilAbsenCol.find({ 'kode_absensi' : id },
+  # {
+  #   '_id' : 0, 'kode_absensi' : 0, 'tglAbsensi' : 0, 'waktuAbsensi' : 0
+  # }
+  ):
+    dataHasilAbsensi.append(doc)
+  return jsonify(dataHasilAbsensi)
+
+@app.route('/hasil-data-absensi/<id>')
+def hasilData(id):
+  dataHasil = []
+  for doc in absenCol.find({ '_id' : id}):
+    dataHasil.append(doc)
+  return jsonify(dataHasil)
 
 @app.route('/stop')
 def stop():
