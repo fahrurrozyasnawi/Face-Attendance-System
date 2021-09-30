@@ -12,8 +12,11 @@ import {
   TableBody,
   TableCell,
   TablePagination,
-  TableRow
+  TableRow,
+  IconButton
 } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete'
+import EditIcon from '@material-ui/icons/Edit'
 import groupBy from 'src/utils/groupBy'
 import EnhancedTableHead from 'src/utils/EnhancedTableHead'
 import EditMahasiswa from './EditMahasiswa';
@@ -155,21 +158,20 @@ const MahasiswaList = (props) => {
                     {mahasiswa.programStudi}
                   </TableCell>
                   <TableCell>
-                  {/* <Link to={`/admin/mahasiswa/${mahasiswa._id}`} >Edit</Link> */}
-                    <Button
+                    <IconButton
                       variant="outlined"
                       color="success"
                       onClick={(event) => getMahasiswa(mahasiswa._id) }
                     >
-                      Edit
-                    </Button>
-                    <Button
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
                       color="secondary"
                       variant="outlined"
                       onClick={(event) => deleteMahasiswa(mahasiswa._id)}
                     >
-                      Delete
-                    </Button>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                   <EditMahasiswa 
                     id={mahasiswa._id}

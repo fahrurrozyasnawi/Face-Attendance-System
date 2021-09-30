@@ -19,7 +19,9 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableBody
+  TableBody,
+  Snackbar,
+  Alert
 } from '@material-ui/core'
 import Clock from 'src/components/dashboard/Clock';
 import { Table } from '@material-ui/core';
@@ -29,13 +31,33 @@ const DashboardAdmin = () => {
   let stream = false
   const { register, handleSubmit } = useForm();
   const [absenData, setAbsenData] = useState([])
-  const [absenId, setAbsenId] = useState("")
-  const [dataCapture, setDataCapture] = useState(null)
   const [isStop, setIsStop] = useState(true)
   const [idAbsensi, setIdAbsensi] = useState(null)
   const [dataAbsensiRealtime, setDataAbsensiRealtime] = useState([])
   const [dataAbsensi, setDataAbsensi] = useState([])  
+  const [message, setMessage] = useState("")
+  const [open, setOpen] = useState(false)
+  const [type, setType] = useState()
 
+  const msgSuccess = (msg = "Absensi sedang berjalan, harap tunggu!", severity='success') => {
+    setMessage(msg)
+    setType(severity)
+  }
+  const msgError = (msg="Absensi sudah dilakukan hari ini untuk mata kuliah tersebut", severity='error') => {
+    setMessage(msg)
+    setType(severity)
+  }
+
+  const handleClick = () => {
+    setOpen(true)
+  }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway'){
+      return
+    }
+    setOpen(false)
+  }
+  
   const getAbsenData = async () => {
     await fetch('/data-absen', {
       method: 'GET'
@@ -73,24 +95,17 @@ const DashboardAdmin = () => {
         console.log("a1 ", res['status'])
         if ( res['status'] == 200 ) {
           handlingAttendance()
-          // getHasilRealtime()
-          // getDataAbsenRealtime()
+          handleClick()
+          msgSuccess()
+        } else {
+          handleClick()
+          msgError()
         }
       })
-      .then(json => console.log("data ",json))
-      .catch(err => console.log("Telah dilakukan absensi hari ini!"))
-  }
-
-  const startCamera = async () => {
-    await fetch('/start-attendance/' + idAbsensi, {
-      method: 'GET'
-    })
-      .then(res => res.json())
-      .then( data => {
-        setDataCapture(data)
-        // setIsStop(true)
-      })
-      .catch( err => console.log("Absen sudah ada!!"))
+      // .then(json => console.log("data ",json))
+      // .catch(err => {
+      //   console.log("Telah dilakukan absensi hari ini!")
+      // })
   }
 
   const getHasilRealtime = async () => {
@@ -99,8 +114,6 @@ const DashboardAdmin = () => {
     })
       .then(res => res.json())
       .then( data => {
-        // const dataHasil = data.map((hasil, i) => ({
-        // }))
         setDataAbsensiRealtime([...data])
       })
   }
@@ -115,40 +128,22 @@ const DashboardAdmin = () => {
   
   const onSubmit = (data) => {
     let id_absensi = data['dataAbsensi'][0]
-    console.log("Id onSubmit ", id_absensi)
     setIdAbsensi(id_absensi)
     startAttendance(id_absensi,data)
-    // stream = true
-    // startCamera(id_absensi)
-    // getDataAbsenRealtime()
-    console.log("onSubmit ",data)
   }
-  
-  // const inCallback = useCallback( () => {
-  //   getDataAbsenRealtime()
-  //   getHasilRealtime()
-  // })
 
   useEffect( () => {
     if (isStop) {
       getAbsenData()   
     }
-    // inCallback()
-    // inCallback()
+
    if (!isStop) {
     getDataAbsenRealtime()
     getHasilRealtime()
-    // return 0
    }
-  //  inCallback()
     
   }, [isStop, dataAbsensiRealtime])
 
-  // console.log("Absen data ", absenData)
-  // console.log("Data Capture ", dataCapture)
-  console.log("Data Absensi Realtime ", dataAbsensiRealtime)
-  console.log("Data Absen Hasil ", dataAbsensi)
-  // console.log(onSubmit())
   return (
     <Box
       sx={{
@@ -200,43 +195,45 @@ const DashboardAdmin = () => {
           <Grid
             container
             spacing={2}
-            // sx={{ justifyContent : 'flex-end' }}
+            sx={{ justifyContent : 'space-between' }}
           >
             <Grid 
               item
-              lg={8}
-              sm={6}
-              xl={8}
-              xs={12}
             >
               <Card>
-              { isStop ? (
-                <Box 
-                  component="img"
-                  sx={{
-                    height : 300,
-                    width : 'auto'
-                  }}
-                  src={null}
-                />
-                ) : (
-                <Box 
-                  component="img"
-                  sx={{
-                    height : 300,
-                    width : 'auto'
-                  }}
-                  src={'/start-attendance/' + idAbsensi}
-                />
-              )}
-                
+                <Box
+                  fullWidth
+                  sx={{ justifyContent : 'center', p:1 }}
+                >
+                  { isStop ? (
+                  <Box 
+                    component="img"
+                    sx={{
+                      height : 300,
+                      width : 450
+                    }}
+                    // src={"D:/TMJ 17/Tugas Akhir/Project/Face-Attendance-System/backend/src/mahasiswaImage/42617020.JPG"}
+                    src={null}
+                  />
+                  ) : (
+                  <Box 
+                    display="block"
+                    component="img"
+                    sx={{
+                      height : 300,
+                      width : 'auto'
+                    }}
+                    src={'/start-attendance/' + idAbsensi}
+                  />
+                )}
+                </Box>
               </Card>
             </Grid>
             <Grid 
               item
-              lg={4}
-              sm={6}
-              xl={4}
+              lg={6}
+              sm={4}
+              xl={8}
               xs={12}
             >
               <form
@@ -248,9 +245,12 @@ const DashboardAdmin = () => {
                   <Grid
                     fullWidth
                   >
-                    <Grid item
+                    <Grid 
+                      item
+                      // marginBottom={20}
                       sx={{
                          py : 1,
+                         mb : 4
                         }}
                     >
                       <FormControl variant="outlined" fullWidth disabled={isStop ? false : true} >
@@ -313,6 +313,7 @@ const DashboardAdmin = () => {
               <Grid 
                 container
                 spacing={1}
+                sx={{ py : 2, mx: 1 }}
               >
                     <Grid 
                     item
@@ -321,7 +322,7 @@ const DashboardAdmin = () => {
                     xl={6}
                     xs={6}
                   >
-                    <Typography variant='subtitle1' > Kelas : {data.kelas} </Typography>
+                    <Typography variant='body2' > Kelas : {data.kelas} </Typography>
                   </Grid>
                   <Grid 
                     item
@@ -330,7 +331,7 @@ const DashboardAdmin = () => {
                     xl={6}
                     xs={6}
                   >
-                    <Typography variant='subtitle1' > Mata Kuliah : {data.mataKuliah} </Typography>
+                    <Typography variant='body2' > Mata Kuliah : {data.mataKuliah} </Typography>
                   </Grid>
                
               </Grid>
@@ -357,19 +358,23 @@ const DashboardAdmin = () => {
                         </TableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody>
-                      {dataAbsensiRealtime.map((mahasiswa, i) => {
-                        return (
-                          <TableRow
-                            hover
-                            key={mahasiswa._id}
-                          >
-                            <TableCell>{console.log(mahasiswa.nim)}</TableCell>
-                            <TableCell>{mahasiswa.namaLengkap}</TableCell>
-                            <TableCell>{mahasiswa.status}</TableCell>
-                          </TableRow>)
-                      })}
-                    </TableBody>
+                    {dataAbsensiRealtime.map((data, index) => {
+                      return (
+                      <TableBody key={index}>
+                      {data.mahasiswa.map((m, i) => (
+                        <TableRow
+                          hover
+                          key={i}
+                        >
+                          <TableCell>{m.nim}</TableCell>
+                          <TableCell>{m.namaLengkap}</TableCell>
+                          <TableCell
+                            // color={}
+                          >{m.status}</TableCell>
+                        </TableRow>
+                      ))}
+                      </TableBody>)
+                     })}
                   </Table>
                 )}
               </Grid>
@@ -377,6 +382,23 @@ const DashboardAdmin = () => {
           </Card>
         </Container>
       </Box>
+      <Snackbar
+        sx={{
+          justifyContent: 'center'
+        }}
+        open={open} 
+        autoHideDuration={6000} 
+        onClose={handleClose}
+        // message="I love snacks"
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+      >
+        <Alert onClose={handleClose} severity={type} >
+          {message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -12,11 +12,14 @@ import {
   TableBody,
   TableCell,
   TablePagination,
-  TableRow
+  TableRow,
+  IconButton
 } from '@material-ui/core';
 import groupBy from 'src/utils/groupBy'
 import EnhancedTableHead from 'src/utils/EnhancedTableHead'
 import EditAbsen from './EditAbsen'
+import DeleteIcon from '@material-ui/icons/Delete'
+import EditIcon from '@material-ui/icons/Edit'
 
 
 const descendingComparator = (a, b, orderBy) => {
@@ -132,20 +135,20 @@ const AbsenList = (props) => {
                   </TableCell>
                   <TableCell>
                   {/* <Link to={`/admin/mahasiswa/${mahasiswa._id}`} >Edit</Link> */}
-                    <Button
+                    <IconButton
                       variant="outlined"
                       color="success"
                       onClick={ () => getAbsen(absen._id) }
                     >
-                      Edit
-                    </Button>
-                    <Button
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
                       color="secondary"
                       variant="outlined"
                       onClick={() => deleteAbsen(absen._id)}
                     >
-                      Delete
-                    </Button>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                   <EditAbsen
                     id={absen._id}

@@ -54,7 +54,7 @@ const AbsenToolbar = (props) => {
     }
   useEffect(() => {
     getDataAbsen()
-  },[searchTerm])
+  },[dataAbsen,searchTerm])
 
   console.log("data absen list ", dataAbsen)
 

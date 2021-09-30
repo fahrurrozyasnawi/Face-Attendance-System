@@ -15,10 +15,13 @@ import {
   TableRow,
   DialogTitle,
   DialogContent,
-  Dialog
+  Dialog,
+  IconButton
 } from '@material-ui/core';
 import EnhancedTableHead from 'src//utils/EnhancedTableHead'
 import EditDosen from 'src/components/dosen/EditDosen'
+import DeleteIcon from '@material-ui/icons/Delete'
+import EditIcon from '@material-ui/icons/Edit'
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]){
@@ -139,20 +142,20 @@ const DosenList = ({ dataDosen, ...rest }) => {
                     {dosen.programStudi}
                   </TableCell>
                   <TableCell>
-                    <Button
+                    <IconButton
                       variant="outlined"
                       color="success"
                       onClick={(event) => getDosen(dosen._id)}
                     >
-                      Edit
-                    </Button>
-                    <Button
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
                       color="secondary"
                       variant="outlined"
                       onClick={(event) => deleteDosen(dosen._id)}
                     >
-                      Delete
-                    </Button>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                   <EditDosen 
                       id={dosen._id}

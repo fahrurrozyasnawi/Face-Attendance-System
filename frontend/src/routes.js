@@ -4,7 +4,7 @@ import DashboardLayout from 'src/components/DashboardLayout';
 import DashboardLayoutAdmin from 'src/components/DashboardLayoutAdmin'
 import MainLayout from 'src/components/MainLayout';
 import AbsensiAdmin from 'src/pages/AbsensiAdmin'
-import DataWajah from 'src/pages/DataWajah'
+import DataWajah from 'src/pages/HasilAbsensi'
 import Dosen from 'src/pages/DosenAdmin'
 import MahasiswaAdmin from 'src/pages/MahasiswaAdmin'
 import DashboardAdmin from 'src/pages/DashboardAdmin'
@@ -20,6 +20,8 @@ import MahasiswaList from './components/mahasiswa/MahasiswaList';
 import MahasiswaToolbar from './components/mahasiswa/MahasiswaToolbar';
 import AbsenToolbar from './components/absen/AbsenToolbar';
 import DosenToolbar from './components/dosen/DosenToolbar';
+import HasilAbsensi from 'src/pages/HasilAbsensi';
+import HasilAbsensiToolbar from './components/hasil-absen/HasilAbsensiToolbar';
 
 // Function
 
@@ -49,7 +51,9 @@ import DosenToolbar from './components/dosen/DosenToolbar';
           { path: ':id', element: <EditMahasiswa />}
         ] },
         // { path: 'mahasiswa', element: <MahasiswaAdmin /> },
-        { path: 'face', element: <DataWajah /> },
+        { path: 'hasil', element: <HasilAbsensi />, children : [
+          { path: 'list', element: <HasilAbsensiToolbar /> }
+        ] },
         { path: 'dosen', element: <Dosen /> ,children: [
           {path: 'list', element: <DosenToolbar /> }
         ] },
@@ -67,6 +71,7 @@ import DosenToolbar from './components/dosen/DosenToolbar';
         { path: '/admin/mahasiswa/', element: <Navigate to="/admin/mahasiswa/list" /> },
         { path: '/admin/dosen/', element: <Navigate to="/admin/dosen/list" /> },
         { path: '/admin/absensi/', element: <Navigate to="/admin/absensi/list" /> },
+        { path: '/admin/hasil/', element: <Navigate to="/admin/hasil/list" /> },
         { path: '*', element: <Navigate to="/404" /> }
       ]
     }

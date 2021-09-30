@@ -54,7 +54,7 @@ import DosenList from './DosenList';
 
   useEffect(() => {
     getDataDosen()
-  },[searchTerm])
+  },[dataDosen,searchTerm])
    
    return (
     <Box {...props}>

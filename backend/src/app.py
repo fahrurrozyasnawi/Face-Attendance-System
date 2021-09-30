@@ -85,8 +85,9 @@ class VideoCamera(object):
 
       imgS = cv2.resize(image, (0, 0), None, 0.25, 0.25)
       # imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
-      rgb=cv2.cvtColor(imgS,cv2.COLOR_BGR2RGB)
+      rgb=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
       face_rects= detector.detect_faces(rgb)
+      # face_rects= face_recognition.face_locations(imgS)
       # for box in face_rects:
       #   h,i,j,k = box['box']
       #   parent = (h,i,j,k)
@@ -111,19 +112,19 @@ class VideoCamera(object):
         if matches[matchIndex]:
           name = VideoCamera.classNames[matchIndex].upper()
           markAttendance(id, name, tglAbsen)
-          print("Id absen dari process fr ", id)
-          print("Nilai tglAbsen ", tglAbsen)
-          print("Terdeteksi ",name)
+          # print("Id absen dari process fr ", id)
+          # print("Nilai tglAbsen ", tglAbsen)
+          # print("Terdeteksi ",name)
 
-          # for (x,y,w,h) in face_rects:
+          # for (x,y,w,h) in facesCurFrame:
           #   cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
-          #   cv2.putText(image, name, (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+          #   cv2.putText(image, "Telah ditandai", (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
           #   break
 
           for face_rect in face_rects:
             x,y,w,h = face_rect['box']
             cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
-            cv2.putText(image, name, (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+            cv2.putText(image, "Telah ditandai", (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 255, 255), 2)
             break
           # markAttendance(id, name)
     VideoCamera.process_this_frame = not VideoCamera.process_this_frame
@@ -383,6 +384,20 @@ def startAttendance(id):
     return Response(gen(VideoCamera(), id, idAbsen),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+# Hasil absensi non-realtime
+@app.route('/hasil', methods=['GET'])
+def absensiHasil():
+  data = []
+
+  for doc in hasilAbsenCol.find():
+    data.append(doc)
+  return jsonify({ 'msg' : 'Berhasil'})
+
+@app.route('/hasil/<id>', methods=['GET', 'PUT'])
+def oneHasilAbsensi(id):
+  return jsonify({'msg' : 'Berhasil'})
+
+# Realtime GET DATA
 @app.route('/hasil-absensi-realtime/<id>')
 def hasil(id):
   dataHasilAbsensi = []
