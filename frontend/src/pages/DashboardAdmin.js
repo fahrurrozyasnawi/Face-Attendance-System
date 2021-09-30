@@ -102,10 +102,10 @@ const DashboardAdmin = () => {
           msgError()
         }
       })
-      // .then(json => console.log("data ",json))
-      // .catch(err => {
-      //   console.log("Telah dilakukan absensi hari ini!")
-      // })
+      .then(json => console.log("data ",json))
+      .catch(err => {
+        console.log("Telah dilakukan absensi hari ini!")
+      })
   }
 
   const getHasilRealtime = async () => {
@@ -371,6 +371,7 @@ const DashboardAdmin = () => {
                           <TableCell
                             // color={}
                           >{m.status}</TableCell>
+                          {console.log("Terdeteksi ", m.status)}
                         </TableRow>
                       ))}
                       </TableBody>)
