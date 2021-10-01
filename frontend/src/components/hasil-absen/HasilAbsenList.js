@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import { useNavigate } from 'react-router-dom'
 import {
   Button,
   Box,
@@ -8,10 +9,14 @@ import {
   TableBody,
   TableCell,
   TablePagination,
-  TableRow
+  TableRow,
+  IconButton
 } from '@material-ui/core';
 import groupBy from 'src/utils/groupBy'
 import EnhancedTableHead from 'src/utils/EnhancedTableHead'
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import DeleteIcon from '@material-ui/icons/Delete'
+import ListMahasiswa from './ListMahasiswa'
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]){
@@ -45,13 +50,20 @@ const headCells = [
   { id: 'waktuAbsensi', label: 'Waktu Absensi' },
 ]
 
-const HasilAbsenList = (props) => {
+const HasilAbsenList = (props, {datas}) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('tglAbsensi')
   const [open, setOpen] = useState(false)
   const [dataHasil, setDataHasil] = useState([])
+  const [idHasilAbsensi, setIdHasilAbsensi] = useState("")
+  const history = useNavigate()
+
+  const navigate = (id) => {
+    history(`hasil/${id}`)
+  }
+  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -63,9 +75,9 @@ const HasilAbsenList = (props) => {
     
   }
   
-  const getHasil = (id) => {
-    
-  }
+  // const getHasil = (id) => {
+  //   let idHasil = id
+  // }
 
   const handleLimitChange = (event) => {
     setLimit(+event.target.value)
@@ -88,7 +100,7 @@ const HasilAbsenList = (props) => {
               headCells={headCells}
             />
             <TableBody>
-              {/* {stableSort(props.dataMahasiswa, getComparator(order, orderBy))
+              {stableSort(props.dataHasil, getComparator(order, orderBy))
                 .slice(page * limit, page * limit + limit)
                 .map((mahasiswa, index) => {
                   return(
@@ -97,51 +109,39 @@ const HasilAbsenList = (props) => {
                   key={mahasiswa._id}
                 >
                   <TableCell>
-                    {mahasiswa.nim}
+                    {mahasiswa.kode_absensi}
                   </TableCell>
                   <TableCell>
-                    {mahasiswa.namaLengkap}
+                    {mahasiswa.tglAbsensi}
                   </TableCell>
                   <TableCell>
-                    {mahasiswa.kelas}
+                    {mahasiswa.waktuAbsensi}
                   </TableCell>
                   <TableCell>
-                    {mahasiswa.angkatan}
-                  </TableCell>
-                  <TableCell>
-                    {mahasiswa.programStudi}
-                  </TableCell>
-                  <TableCell>
-                    <Button
+                    <IconButton
                       variant="outlined"
                       color="success"
-                      onClick={(event) => getMahasiswa(mahasiswa._id) }
+                      onClick={ () => navigate(mahasiswa._id) }
                     >
-                      Edit
-                    </Button>
-                    <Button
+                      <VisibilityIcon />
+                    </IconButton>
+                    <IconButton
                       color="secondary"
                       variant="outlined"
-                      onClick={(event) => deleteMahasiswa(mahasiswa._id)}
+                      onClick={(event) => deleteHasil(mahasiswa._id)}
                     >
-                      Delete
-                    </Button>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
-                  <EditMahasiswa 
-                    id={mahasiswa._id}
-                    // mahasiswaData={mahasiswaData}
-                    open={open}
-                    handleClose={handleClose}
-                  />
                 </TableRow>
-              )})} */}
+              )})}
             </TableBody>
           </Table>
         </Box>
       </PerfectScrollbar>
       <TablePagination 
         component="div"
-        count={props.dataMahasiswa.length}
+        count={props.dataHasil.length}
         onPageChange={hanldePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}

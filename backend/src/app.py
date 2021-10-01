@@ -124,7 +124,7 @@ class VideoCamera(object):
           for face_rect in face_rects:
             x,y,w,h = face_rect['box']
             cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),2)
-            cv2.putText(image, "Telah ditandai", (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 255, 255), 2)
+            cv2.putText(image, name, (x + 6, (y+h) - 6), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 255, 255), 2)
             break
           # markAttendance(id, name)
     VideoCamera.process_this_frame = not VideoCamera.process_this_frame
@@ -391,11 +391,16 @@ def absensiHasil():
 
   for doc in hasilAbsenCol.find():
     data.append(doc)
-  return jsonify({ 'msg' : 'Berhasil'})
+  return jsonify(data)
 
-@app.route('/hasil/<id>', methods=['GET', 'PUT'])
-def oneHasilAbsensi(id):
-  return jsonify({'msg' : 'Berhasil'})
+# @app.route('/hasil/<id>', methods=['GET', 'PUT'])
+# def oneHasilAbsensi(id):
+#   data = []
+#   for doc in hasilAbsenCol.find({ 'kode_absensi' : id },
+#   {
+#     '_id' : 0, 'kode_abse'
+#   })
+#   return jsonify({'msg' : 'Berhasil'})
 
 # Realtime GET DATA
 @app.route('/hasil-absensi-realtime/<id>')

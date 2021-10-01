@@ -22,6 +22,7 @@ import AbsenToolbar from './components/absen/AbsenToolbar';
 import DosenToolbar from './components/dosen/DosenToolbar';
 import HasilAbsensi from 'src/pages/HasilAbsensi';
 import HasilAbsensiToolbar from './components/hasil-absen/HasilAbsensiToolbar';
+import ListMahasiswa from './components/hasil-absen/ListMahasiswa';
 
 // Function
 
@@ -55,7 +56,8 @@ import HasilAbsensiToolbar from './components/hasil-absen/HasilAbsensiToolbar';
           { path: 'list', element: <HasilAbsensiToolbar /> }
         ] },
         { path: 'dosen', element: <Dosen /> ,children: [
-          {path: 'list', element: <DosenToolbar /> }
+          {path: 'list', element: <DosenToolbar /> },
+          {path: ':id', element: <ListMahasiswa />}
         ] },
         { path: '*', element: <Navigate to="/404" /> }
       ]
