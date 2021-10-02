@@ -255,7 +255,7 @@ const EditAbsen = (props) => {
                 color='primary'
                 variant='contained'
               >
-                Simpan
+                Ubah Data
               </Button>
             </Box>
             <Snackbar

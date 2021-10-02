@@ -123,7 +123,7 @@ const ListMahasiswa = (props) => {
   }
 
   const getDataAbsensi = (id) => {
-    fetch(`/hasil-data-absensi/${id}`, {
+    fetch("/hasil-data-absensi/" + id, {
       method: 'GET'
     })
       .then(res => res.json())
@@ -225,7 +225,9 @@ const ListMahasiswa = (props) => {
                         onRequestSort={handleRequestSort}
                         headCells={headCells}
                       />
-                      {dataList.map((data, index) => {
+                      {stableSort(dataList, getComparator(order,orderBy))
+                      .slice(page * limit, page * limit + limit)
+                      .map((data, index) => {
                           return (
                           <TableBody key={index}>
                             {stableSort(data.mahasiswa, getComparator(order, orderBy))
@@ -244,18 +246,13 @@ const ListMahasiswa = (props) => {
                                 <IconButton
                                   variant="outlined"
                                   color="success"
-                                  // onClick={(event) => getEditMahasiswa(m._id) }
-
+                                  onClick={() => navigate(`../edit/${id}`, { 
+                                    state : {idMahasiswa: m._id, status : m.status}
+                                  })}
                                 >
                                   <EditIcon />
                                 </IconButton>
                               </TableCell>
-                              <EditStatusMahasiswa
-                                id={idAbsensi} 
-                                idMahasiswa={nimMahasiswa}
-                                open={open}
-                                handleClose={handleClose}
-                              />
                             </TableRow>
                           ))}
                           </TableBody>)

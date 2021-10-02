@@ -77,7 +77,7 @@ import EditStatusMahasiswa from './components/hasil-absen/EditStatusMahasiswa';
         { path: '/admin/dosen/', element: <Navigate to="/admin/dosen/list" /> },
         { path: '/admin/absensi/', element: <Navigate to="/admin/absensi/list" /> },
         { path: '/admin/hasil/', element: <Navigate to="/admin/hasil/list" /> },
-        // { path: '*', element: <Navigate to="/404" /> }
+        { path: '*', element: <Navigate to="/404" /> }
       ]
     }
   ]
