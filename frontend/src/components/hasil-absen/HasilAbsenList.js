@@ -61,7 +61,7 @@ const HasilAbsenList = (props, {datas}) => {
   const history = useNavigate()
 
   const navigate = (id) => {
-    history(`hasil/${id}`)
+    history(`../${id}`)
   }
   
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet'
-import {useForm} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import {
   Box,
   Container,
@@ -143,7 +143,8 @@ const DashboardAdmin = () => {
    }
     
   }, [isStop, dataAbsensiRealtime])
-
+  
+  console.log("Data ", dataAbsensiRealtime)
   return (
     <Box
       sx={{
@@ -377,7 +378,7 @@ const DashboardAdmin = () => {
                       </TableBody>)
                      })}
                   </Table>
-                )}
+                  )}
               </Grid>
             </CardContent>
           </Card>

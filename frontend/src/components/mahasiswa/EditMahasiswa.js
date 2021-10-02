@@ -93,7 +93,7 @@ const EditMahasiswa = (props) => {
       }) 
   }
 
-  useEffect( async () => {
+  useEffect( () => {
     getOneData(id)
   }, [])
 

@@ -23,6 +23,7 @@ import DosenToolbar from './components/dosen/DosenToolbar';
 import HasilAbsensi from 'src/pages/HasilAbsensi';
 import HasilAbsensiToolbar from './components/hasil-absen/HasilAbsensiToolbar';
 import ListMahasiswa from './components/hasil-absen/ListMahasiswa';
+import EditStatusMahasiswa from './components/hasil-absen/EditStatusMahasiswa';
 
 // Function
 
@@ -53,13 +54,15 @@ import ListMahasiswa from './components/hasil-absen/ListMahasiswa';
         ] },
         // { path: 'mahasiswa', element: <MahasiswaAdmin /> },
         { path: 'hasil', element: <HasilAbsensi />, children : [
-          { path: 'list', element: <HasilAbsensiToolbar /> }
+          { path: 'list', element: <HasilAbsensiToolbar /> },
+          { path: ':id', element: <ListMahasiswa /> },
+          { path: 'edit/:id', element: <EditStatusMahasiswa /> }
         ] },
         { path: 'dosen', element: <Dosen /> ,children: [
           {path: 'list', element: <DosenToolbar /> },
-          {path: ':id', element: <ListMahasiswa />}
+          // {path: ':id', element: <ListMahasiswa />}
         ] },
-        { path: '*', element: <Navigate to="/404" /> }
+        // { path: '*', element: <Navigate to="/404" /> }
       ]
     },
     {
@@ -74,7 +77,7 @@ import ListMahasiswa from './components/hasil-absen/ListMahasiswa';
         { path: '/admin/dosen/', element: <Navigate to="/admin/dosen/list" /> },
         { path: '/admin/absensi/', element: <Navigate to="/admin/absensi/list" /> },
         { path: '/admin/hasil/', element: <Navigate to="/admin/hasil/list" /> },
-        { path: '*', element: <Navigate to="/404" /> }
+        // { path: '*', element: <Navigate to="/404" /> }
       ]
     }
   ]

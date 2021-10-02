@@ -393,14 +393,26 @@ def absensiHasil():
     data.append(doc)
   return jsonify(data)
 
-# @app.route('/hasil/<id>', methods=['GET', 'PUT'])
-# def oneHasilAbsensi(id):
-#   data = []
-#   for doc in hasilAbsenCol.find({ 'kode_absensi' : id },
-#   {
-#     '_id' : 0, 'kode_abse'
-#   })
-#   return jsonify({'msg' : 'Berhasil'})
+@app.route('/hasil/<id>', methods=['GET', 'PUT'])
+def oneHasilAbsensi(id):
+  data = []
+
+  if request.method == 'GET':
+    for doc in hasilAbsenCol.find({ '_id' : id },
+    {
+      '_id' : 0, 'tglAbsensi' : 0, 'waktuAbsensi' : 0
+    }):
+      data.append(doc)
+    return jsonify(data)
+  
+  if request.method == 'PUT':
+    idMahasiswa = request.json['status'][1]
+    hasilAbsenCol.update_one({'_id' : id, "mahasiswa._id" : idMahasiswa}, {
+      "$set" : {
+        "mahasiswa.$.status" : request.json['status'][0]
+      }
+    })
+    return jsonify({'msg' : 'Sukses'})
 
 # Realtime GET DATA
 @app.route('/hasil-absensi-realtime/<id>')
